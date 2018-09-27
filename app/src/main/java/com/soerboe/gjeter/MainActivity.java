@@ -7,9 +7,12 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
@@ -29,6 +32,9 @@ import java.net.URL;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
+
     private MapView mapView;
     private WMSEndpoint wmsEndpoint;
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -43,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Create the map
         setContentView(R.layout.activity_main);
+
+        // Initialize the navigation bar
+        NavBarSetup();
 
         mapView = findViewById(R.id.map);
 
@@ -197,6 +206,26 @@ public class MainActivity extends AppCompatActivity {
                     "Location permission denied",//getResources().getString(R.string.location_permission_denied),
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void NavBarSetup(){
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
+                R.string.open, R.string.close);
+
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (actionBarDrawerToggle.onOptionsItemSelected(item)){
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
 
