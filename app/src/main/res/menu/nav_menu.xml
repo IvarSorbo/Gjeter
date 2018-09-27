@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/nav_menu"
-        android:title="Menu"/>
+    <item
+        android:id="@+id/download_map"
+        android:icon="@drawable/ic_baseline_save_alt_24px"
+        android:title="Download map" />
 
-    <item android:id="@+id/nav_menu2"
+    <item android:id="@+id/menu_item2"
         android:title="Menu2"/>
 
-    <item android:id="@+id/nav_menu3"
-        android:title="Menu3"/>
+    <item android:id="@+id/info_item"
+        android:icon="@drawable/ic_baseline_info_24px"
+        android:title="Info"/>
 </menu>

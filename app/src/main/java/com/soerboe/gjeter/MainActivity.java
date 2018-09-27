@@ -5,14 +5,18 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
@@ -31,9 +35,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+    private MenuItem downloadMapMenuItem;
 
     private MapView mapView;
     private WMSEndpoint wmsEndpoint;
@@ -47,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         Context ctx = getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
 
-        // Create the map
+        // Create the map (Don't use findViewById before the content view is set)
         setContentView(R.layout.activity_main);
 
         // Initialize the navigation bar
@@ -81,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(MainActivity.this, reqPermissions, requestCode);
             // The reponse to this is handled by onRequestPermissionsResult
         }
-
 
         /*
         // Doesn't display anything...
@@ -145,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
 
             Log.d(TAG, "\nSuccess");
             Log.d(TAG, mapView.getTileProvider().getTileSource().name());
+            Log.d(TAG, "Storage location: " + Configuration.getInstance().getOsmdroidBasePath().getAbsolutePath());
         } catch (Exception e){
             Log.d(TAG, "\nMessage: " + e.getMessage());
             Log.d(TAG, "Exception class:" + e.getClass().toString());
@@ -209,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void NavBarSetup(){
+        // Setup the navigation menu
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
                 R.string.open, R.string.close);
@@ -217,6 +223,10 @@ public class MainActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Setup listeners for navigation menu items.
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
@@ -226,6 +236,36 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        // Handling item clicks
+        switch (menuItem.getItemId()) {
+            case R.id.download_map: {
+                DownloadArea();
+                break;
+            }
+            case R.id.menu_item2:{
+                Log.d(TAG, "Menu item 2 was clicked");
+                break;
+            }
+            case R.id.info_item:{
+                Log.d(TAG, "Info item was clicked");
+                break;
+            }
+
+        }
+        //close navigation drawer
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    /**
+     * Cache the current area
+     */
+    private void DownloadArea(){
+        Log.d(TAG, "the button was clicked");
     }
 }
 
