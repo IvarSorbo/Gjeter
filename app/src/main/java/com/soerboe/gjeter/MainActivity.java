@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
             // The reponse to this is handled by onRequestPermissionsResult
         }
 
-        //mapView.setTileSource(TileSourceFactory.MAPNIK); // The original... from OSM
 
         /*
         // Doesn't display anything...
@@ -150,9 +149,11 @@ public class MainActivity extends AppCompatActivity {
         // That works, Google Map's API also returns 404 if I change zoom level on some of the (x,y) pairs, so that is probably intended.
 
         // Zoom level 17 and 18 uses the black and white map. Level 16 should be detailed enough.
+        String layer = "toporaster3";// evt "topo4"
         mapView.setTileSource(new OnlineTileSourceBase("Kartverket", 0, 16, 150 , "png",
-                new String[] { "http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=toporaster3" }) {
-            // Evt. "?layers=topo4"
+                new String[] { "http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers="+layer,
+                        "http://opencache2.statkart.no/gatekeeper/gk/gk.open_gmaps?layers="+layer,
+                        "http://opencache3.statkart.no/gatekeeper/gk/gk.open_gmaps?layers="+layer}) {
             @Override
             public String getTileURLString(long pMapTileIndex) {
                 String result = getBaseUrl()
@@ -169,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
         mapView.setBuiltInZoomControls(true);
         mapView.setMultiTouchControls(true);
 
+        //TODO: start at current GPS position, "else if" start at last GPS position, "else" start at this location...
         // Move the map to the starting position.
         GeoPoint startPoint = new GeoPoint(63.419780, 10.401765);
 
@@ -178,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Handle the permissions request response.
+     * TODO: make the permission process prettier
      */
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
@@ -196,3 +199,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
+
+/*
+* NOTE;
+* see: https://stackoverflow.com/questions/14060389/osmdroid-displays-an-empty-grid
+* for a possible solution for why Kartverket doesn't work in the emulator.
+* I have to either get some external storage for the emulator or I have to change
+* where OSMdroid stores the cached files (see bottom answer).
+* OpenStreetMapTileProviderConstants.setCachePath(this.getFilesDir().getAbsolutePath());
+*
+ */
