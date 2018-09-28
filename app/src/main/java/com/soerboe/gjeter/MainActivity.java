@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     SqliteArchiveTileWriter sqliteArchiveTileWriter;
     AlertDialog alertDialog;
 
-    // Misc
+    // Tag used in debug messages
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Context ctx = getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
 
-        // Create the map (Don't use findViewById before the content view is set)
+        // (Don't use findViewById before the content view is set)
         setContentView(R.layout.activity_main);
 
         // Initialize the navigation bar
@@ -83,12 +83,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 && ContextCompat.checkSelfPermission(MainActivity.this,
                 reqPermissions[3]) == PackageManager.PERMISSION_GRANTED
                 ) {
-            // Do stuff
-            ZXYsetup();
+            // Setup the connection to Kartverket's API.
+            SetupMap();
         } else {
-            // request permission
+            // Request permission
             ActivityCompat.requestPermissions(MainActivity.this, reqPermissions, requestCode);
-            // The reponse to this is handled by onRequestPermissionsResult
+            // The response to this is handled by onRequestPermissionsResult
         }
     }
 
@@ -104,49 +104,59 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mapView.onPause();
     }
 
-    private void moveMapTo(GeoPoint point){
+    /**
+     * Center the map
+     */
+
+    private void moveMapTo(GeoPoint point, Double zoom){
         IMapController mapController = mapView.getController();
-        mapController.setZoom(9);
+        mapController.setZoom(zoom);
         mapController.setCenter(point);
     }
 
 
-    private void ZXYsetup(){
-        //http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=sjokartraster&zoom=1&x=1&y=1
-        // That works, Google Map's API also returns 404 if I change zoom level on some of the (x,y) pairs, so that is probably intended.
-
-        // Zoom level 17 and 18 uses the black and white map. Level 16 should be detailed enough.
-        String layer = "toporaster3";// evt "topo4"
-        mapView.setTileSource(new OnlineTileSourceBase("Kartverket", 0, 16, 150 , "png",
-                new String[] { "http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers="+layer,
-                        "http://opencache2.statkart.no/gatekeeper/gk/gk.open_gmaps?layers="+layer,
-                        "http://opencache3.statkart.no/gatekeeper/gk/gk.open_gmaps?layers="+layer}) {
-            @Override
-            public String getTileURLString(long pMapTileIndex) {
-                String result = getBaseUrl()
-                        + "&zoom=" + MapTileIndex.getZoom(pMapTileIndex)
-                        + "&x=" + MapTileIndex.getX(pMapTileIndex)
-                        + "&y=" + MapTileIndex.getY(pMapTileIndex);
-                //+ mImageFilenameEnding;
-                Log.d(TAG, "\ngetTileURLString returns: " + result);
-                return result;
-            }
-        });
+    /**
+     * Setup the map
+     */
+    private void SetupMap(){
+        // Connection to Kartverket's API.
+        SetupKartverketZXY();
 
         // Add default zoom buttons and ability to zoom with 2 fingers.
         mapView.setBuiltInZoomControls(true);
         mapView.setMultiTouchControls(true);
 
-        //TODO: start at current GPS position, "else if" start at last GPS position, "else" start at this location...
-        // Move the map to the starting position.
-        GeoPoint startPoint = new GeoPoint(63.419780, 10.401765);
-
         // Limit the zoom levels
-        mapView.setMaxZoomLevel(16.0);
-        mapView.setMinZoomLevel(2.0);
+        mapView.setMaxZoomLevel(16.0); // (Kartverket level 17+ uses the black and white map).
+        mapView.setMinZoomLevel(6.0); // No point in being able to see more than Norway.
 
-        //mapView.setTileSource(source);
-        moveMapTo(startPoint);
+        // Move the map to the starting position.
+        //TODO: start at current GPS position, "else" start at last position, "else" start at some default location
+        GeoPoint startPoint = new GeoPoint(63.419780, 10.401765);
+        moveMapTo(startPoint, 9.0);
+    }
+
+    /**
+     * Setup the connection to Kartverket's API
+     */
+    private void SetupKartverketZXY(){
+        String layer = "toporaster3";// evt "topo4"
+
+        mapView.setTileSource(new OnlineTileSourceBase("Kartverket", 0, 20, 150 , "png",
+                new String[] { "http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers="+layer,
+                        "http://opencache2.statkart.no/gatekeeper/gk/gk.open_gmaps?layers="+layer,
+                        "http://opencache3.statkart.no/gatekeeper/gk/gk.open_gmaps?layers="+layer}) {
+            @Override
+            public String getTileURLString(long pMapTileIndex) {
+                // Creating the url string
+                String result = getBaseUrl()
+                        + "&zoom=" + MapTileIndex.getZoom(pMapTileIndex)
+                        + "&x=" + MapTileIndex.getX(pMapTileIndex)
+                        + "&y=" + MapTileIndex.getY(pMapTileIndex);
+                Log.d(TAG, "\nQuerying Kartverket's API at: " + result);
+                return result;
+            }
+        });
     }
 
     /**
@@ -157,22 +167,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            ZXYsetup();
+            SetupMap();
         } else {
+            //TODO: make this report more useful
             // report to user that permission was denied
             Toast.makeText(MainActivity.this,
-                    "Write permission denied",//getResources().getString(R.string.raster_write_permission_denied),
-                    Toast.LENGTH_SHORT).show();
-
-            Toast.makeText(MainActivity.this,
-                    "Location permission denied",//getResources().getString(R.string.location_permission_denied),
+                    "One or more permissions were denied",//getResources().getString(R.string.something),
                     Toast.LENGTH_SHORT).show();
         }
     }
 
+    /**
+     * Setup the navigation bar/menu
+     */
     private void NavBarSetup(){
-        // Setup the navigation menu
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        // Toggle to open/close the navigation bar
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
                 R.string.open, R.string.close);
 
@@ -197,23 +208,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        // Handling item clicks
+        // Handling navigation item click.
         switch (menuItem.getItemId()) {
             case R.id.download_map: {
                 showDownloadDialog();
                 break;
             }
-            case R.id.menu_item2:{
-                Log.d(TAG, "Menu item 2 was clicked");
+            case R.id.menu_item2:{//TODO
+                Toast.makeText(MainActivity.this,"Menu item 2 was clicked", Toast.LENGTH_SHORT).show();
                 break;
             }
-            case R.id.info_item:{
-                Log.d(TAG, "Info item was clicked");
+            case R.id.info_item:{//TODO
+                Toast.makeText(MainActivity.this,"Info item was clicked", Toast.LENGTH_SHORT).show();
                 break;
             }
 
         }
-        //close navigation drawer
+        // Close navigation drawer.
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -222,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * Cache the current area
      */
     private void showDownloadDialog(){
-        // Build the dialog
+        // Build the dialog.
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(R.string.download_alert_title);
         alertDialogBuilder.setItems(new CharSequence[]{
@@ -251,10 +262,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         alertDialog.show();
     }
 
+    /**
+     * Show information about the cache
+     */
     private void showCurrentCacheInfo() {
+        //TODO
         Toast.makeText(this, "TODO: show info here", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Start downloading the tiles while showing a progression bar
+     */
     private void downloadJobAlert() {
         try {
             int zoom_max = (int) Math.floor(mapView.getZoomLevelDouble());
@@ -262,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             BoundingBox bb = mapView.getBoundingBox();
             int tilecount = cacheManager.possibleTilesInArea(bb, zoom_min, zoom_max);
 
-            String outputName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "osmdroid" + File.separator + "Kartverket";//TODO: change filename
+            String outputName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "osmdroid" + File.separator + "Kartverket";//TODO: change filename?
             sqliteArchiveTileWriter=new SqliteArchiveTileWriter(outputName);
             cacheManager = new CacheManager(mapView, sqliteArchiveTileWriter);
 
@@ -304,7 +322,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
             }
         }catch (Exception ex){
-            //TODO something better?
+            //TODO
             ex.printStackTrace();
         }
 
