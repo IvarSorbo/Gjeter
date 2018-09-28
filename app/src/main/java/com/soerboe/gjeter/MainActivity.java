@@ -16,6 +16,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -29,6 +30,11 @@ import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.ScaleBarOverlay;
+import org.osmdroid.views.overlay.compass.CompassOverlay;
+import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.io.File;
 
@@ -39,6 +45,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // Map
     private MapView mapView;
+    private MyLocationNewOverlay myLocationNewOverlay;
+    private CompassOverlay compassOverlay;
+    private ScaleBarOverlay scaleBarOverlay;
 
     // Offline caching
     CacheManager cacheManager;
@@ -126,6 +135,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mapView.setBuiltInZoomControls(true);
         mapView.setMultiTouchControls(true);
 
+        // Add a MyLocation overlay
+        this.myLocationNewOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this),mapView);
+        this.myLocationNewOverlay.enableMyLocation();
+        mapView.getOverlays().add(this.myLocationNewOverlay);
+
+        // Add a compass overlay
+        this.compassOverlay = new CompassOverlay(this, new InternalCompassOrientationProvider(this), mapView);
+        this.compassOverlay.enableCompass();
+        mapView.getOverlays().add(this.compassOverlay);
+
+        // Add map scale bar
+        final DisplayMetrics dm = this.getResources().getDisplayMetrics();
+        scaleBarOverlay = new ScaleBarOverlay(mapView);
+        scaleBarOverlay.setCentred(true);
+        // These values changes the location on the screen
+        scaleBarOverlay.setScaleBarOffset(dm.widthPixels / 2, 10);
+        mapView.getOverlays().add(this.scaleBarOverlay);
+
         // Limit the zoom levels
         mapView.setMaxZoomLevel(16.0); // (Kartverket level 17+ uses the black and white map).
         mapView.setMinZoomLevel(6.0); // No point in being able to see more than Norway.
@@ -133,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Move the map to the starting position.
         //TODO: start at current GPS position, "else" start at last position, "else" start at some default location
         GeoPoint startPoint = new GeoPoint(63.419780, 10.401765);
-        moveMapTo(startPoint, 9.0);
+        moveMapTo(startPoint, 11.0);
     }
 
     /**
@@ -280,7 +307,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             BoundingBox bb = mapView.getBoundingBox();
             int tilecount = cacheManager.possibleTilesInArea(bb, zoom_min, zoom_max);
 
-            String outputName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "osmdroid" + File.separator + "Kartverket";//TODO: change filename?
+            //TODO: change filename? (Do I need a unique filename for each output?)
+            String outputName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "osmdroid" + File.separator + "Kartverket";
             sqliteArchiveTileWriter=new SqliteArchiveTileWriter(outputName);
             cacheManager = new CacheManager(mapView, sqliteArchiveTileWriter);
 
