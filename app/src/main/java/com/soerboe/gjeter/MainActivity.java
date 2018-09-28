@@ -2,7 +2,9 @@ package com.soerboe.gjeter;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -11,37 +13,39 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.cachemanager.CacheManager;
+import org.osmdroid.tileprovider.modules.SqliteArchiveTileWriter;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.views.MapView;
-import org.osmdroid.wms.WMSEndpoint;
-import org.osmdroid.wms.WMSParser;
-import org.osmdroid.wms.WMSTileSource;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Objects;
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+    // Navigation menu
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
-    private MenuItem downloadMapMenuItem;
 
+    // Map
     private MapView mapView;
-    private WMSEndpoint wmsEndpoint;
+
+    // Offline caching
+    CacheManager cacheManager;
+    SqliteArchiveTileWriter sqliteArchiveTileWriter;
+    AlertDialog alertDialog;
+
+    // Misc
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
@@ -86,16 +90,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             ActivityCompat.requestPermissions(MainActivity.this, reqPermissions, requestCode);
             // The reponse to this is handled by onRequestPermissionsResult
         }
-
-        /*
-        // Doesn't display anything...
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                WMSSetup();
-            }
-        });
-        thread.start();*/
     }
 
     @Override
@@ -116,47 +110,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mapController.setCenter(point);
     }
 
-    private void WMSSetup(){
-        HttpURLConnection c;
-        InputStream is;
-        try{
-            c = (HttpURLConnection) new URL("https://openwms.statkart.no/skwms1/wms.topo4?request=GetCapabilities&service=WMS").openConnection();
-            is = c.getInputStream();
-
-            wmsEndpoint = WMSParser.parse(is);
-
-            is.close();
-            c.disconnect();
-
-            WMSTileSource source = WMSTileSource.createFrom(wmsEndpoint, wmsEndpoint.getLayers().get(201));
-            //for (int i = 0; i < wmsEndpoint.getLayers().size(); i++){
-            //    if(Objects.equals(wmsEndpoint.getLayers().get(i).getName(), "topo4_WMS")){
-            //        Log.d(TAG, "\nidx: " + i);
-            //    }
-            // }
-            //topo4_WMS
-
-
-            // Add default zoom buttons and ability to zoom with 2 fingers.
-            mapView.setBuiltInZoomControls(true);
-            mapView.setMultiTouchControls(true);
-
-            // Move the map to the starting position.
-            GeoPoint startPoint = new GeoPoint(63.419780, 10.401765);
-
-            mapView.setTileSource(source);
-            moveMapTo(startPoint);
-
-            Log.d(TAG, "\nSuccess");
-            Log.d(TAG, mapView.getTileProvider().getTileSource().name());
-            Log.d(TAG, "Storage location: " + Configuration.getInstance().getOsmdroidBasePath().getAbsolutePath());
-        } catch (Exception e){
-            Log.d(TAG, "\nMessage: " + e.getMessage());
-            Log.d(TAG, "Exception class:" + e.getClass().toString());
-            e.printStackTrace();
-        }
-        // https://openwms.statkart.no/skwms1/wms.toporaster3?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=toporaster&CRS=EPSG%3A25833&STYLES=&WIDTH=1362&HEIGHT=1040&BBOX=220000.582811029%2C6976748.1392506445%2C335178.592811029%2C7064746.291750644
-    }
 
     private void ZXYsetup(){
         //http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=sjokartraster&zoom=1&x=1&y=1
@@ -187,6 +140,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //TODO: start at current GPS position, "else if" start at last GPS position, "else" start at this location...
         // Move the map to the starting position.
         GeoPoint startPoint = new GeoPoint(63.419780, 10.401765);
+
+        // Limit the zoom levels
+        mapView.setMaxZoomLevel(16.0);
+        mapView.setMinZoomLevel(2.0);
 
         //mapView.setTileSource(source);
         moveMapTo(startPoint);
@@ -243,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handling item clicks
         switch (menuItem.getItemId()) {
             case R.id.download_map: {
-                DownloadArea();
+                showDownloadDialog();
                 break;
             }
             case R.id.menu_item2:{
@@ -264,8 +221,93 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     /**
      * Cache the current area
      */
-    private void DownloadArea(){
-        Log.d(TAG, "the button was clicked");
+    private void showDownloadDialog(){
+        // Build the dialog
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(R.string.download_alert_title);
+        alertDialogBuilder.setItems(new CharSequence[]{
+                        getResources().getString(R.string.show_cache_info),
+                        getResources().getString(R.string.cache_download),
+                        getResources().getString(R.string.cancel)
+                }, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case 0:
+                                cacheManager = new CacheManager(mapView);
+                                showCurrentCacheInfo();
+                                break;
+                            case 1:
+                                downloadJobAlert();
+                            default:
+                                dialog.dismiss();
+                                break;
+                        }
+                    }
+                }
+        );
+
+        // Create and show it
+        alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    private void showCurrentCacheInfo() {
+        Toast.makeText(this, "TODO: show info here", Toast.LENGTH_SHORT).show();
+    }
+
+    private void downloadJobAlert() {
+        try {
+            int zoom_max = (int) Math.floor(mapView.getZoomLevelDouble());
+            int zoom_min = (int) Math.floor(mapView.getMinZoomLevel());
+            BoundingBox bb = mapView.getBoundingBox();
+            int tilecount = cacheManager.possibleTilesInArea(bb, zoom_min, zoom_max);
+
+            String outputName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "osmdroid" + File.separator + "Kartverket";//TODO: change filename
+            sqliteArchiveTileWriter=new SqliteArchiveTileWriter(outputName);
+            cacheManager = new CacheManager(mapView, sqliteArchiveTileWriter);
+
+            Log.d(TAG, "\nDownloading tiles:");
+            Log.d(TAG, "Output: " + outputName);
+            Log.d(TAG, tilecount + " tiles");
+
+            if (true) {
+                //this triggers the download
+                cacheManager.downloadAreaAsync(this, bb, zoom_min, zoom_max, new CacheManager.CacheManagerCallback() {
+                    @Override
+                    public void onTaskComplete() {
+                        Toast.makeText(MainActivity.this, "Download complete!", Toast.LENGTH_LONG).show();
+                        if (sqliteArchiveTileWriter!=null)
+                            sqliteArchiveTileWriter.onDetach();
+                    }
+
+                    @Override
+                    public void onTaskFailed(int errors) {
+                        Toast.makeText(MainActivity.this, "Download complete with " + errors + " errors", Toast.LENGTH_LONG).show();
+                        if (sqliteArchiveTileWriter!=null)
+                            sqliteArchiveTileWriter.onDetach();
+                    }
+
+                    @Override
+                    public void updateProgress(int progress, int currentZoomLevel, int zoomMin, int zoomMax) {
+                        //NOOP since we are using the build in UI
+                    }
+
+                    @Override
+                    public void downloadStarted() {
+                        //NOOP since we are using the build in UI
+                    }
+
+                    @Override
+                    public void setPossibleTilesInArea(int total) {
+                        //NOOP since we are using the build in UI
+                    }
+                });
+            }
+        }catch (Exception ex){
+            //TODO something better?
+            ex.printStackTrace();
+        }
+
     }
 }
 

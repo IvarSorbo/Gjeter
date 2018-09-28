@@ -3,4 +3,9 @@
 
     <string name="open">Open</string>
     <string name="close">Close</string>
+
+    <string name="download_alert_title">Insert a nice title here</string>
+    <string name="show_cache_info">Current archive</string>
+    <string name="cache_download">Download</string>
+    <string name="cancel">Cancel</string>
 </resources>
