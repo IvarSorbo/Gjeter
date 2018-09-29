@@ -36,6 +36,7 @@ import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
@@ -43,6 +44,9 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     // Navigation menu
@@ -54,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private MyLocationNewOverlay myLocationNewOverlay;
     private CompassOverlay compassOverlay;
     private ScaleBarOverlay scaleBarOverlay;
+    private Polyline trackOverlay;
 
     // Offline caching
     CacheManager cacheManager;
@@ -66,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Location
     private LocationManager locationManager; //Accesses location services
     private LocationListener locationListener; //Listens for location changes
+    private ArrayList<Waypoint> track = new ArrayList<>(); //Stores the track
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,7 +142,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mapController.setCenter(point);
     }
 
-
     /**
      * Setup the map
      */
@@ -151,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Add a MyLocation overlay
         this.myLocationNewOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this),mapView);
         this.myLocationNewOverlay.enableMyLocation();
-        mapView.getOverlays().add(this.myLocationNewOverlay);
+        //mapView.getOverlays().add(this.myLocationNewOverlay);//TODO: remove comments
 
         // Add a compass overlay
         this.compassOverlay = new CompassOverlay(this, new InternalCompassOrientationProvider(this), mapView);
@@ -170,10 +175,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mapView.setMaxZoomLevel(16.0); // (Kartverket level 17+ uses the black and white map).
         mapView.setMinZoomLevel(6.0); // No point in being able to see more than Norway.
 
+        // Setup the overlay that will display the track
+        //TODO: this doesn't work for some reason
+        trackOverlay = new Polyline(mapView);
+        trackOverlay.setColor(0xB40431);
+        trackOverlay.setWidth(20f);
+        mapView.getOverlays().add(trackOverlay);
+
         // Move the map to the starting position.
         //TODO: start at current GPS position, "else" start at last position, "else" start at some default location
         GeoPoint startPoint = new GeoPoint(63.419780, 10.401765);
-        moveMapTo(startPoint, 11.0);
+        moveMapTo(startPoint, 12.0);
     }
 
     /**
@@ -182,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void SetupKartverketZXY(){
         String layer = "toporaster3";// evt "topo4"
 
-        mapView.setTileSource(new OnlineTileSourceBase("Kartverket", 0, 20, 150 , "png",
+        mapView.setTileSource(new OnlineTileSourceBase("Kartverket", 0, 20, 256 , "png",
                 new String[] { "http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers="+layer,
                         "http://opencache2.statkart.no/gatekeeper/gk/gk.open_gmaps?layers="+layer,
                         "http://opencache3.statkart.no/gatekeeper/gk/gk.open_gmaps?layers="+layer}) {
@@ -391,12 +403,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onLocationChanged(Location location) {
                 // Called whenever the location is updated
-                Log.d(TAG, "location is updated");
-                // TODO: store the new location in a list of points.
+                // Store the new location in a list of waypoints.
+                Waypoint waypoint = new Waypoint(location, new Date(System.currentTimeMillis()));
+                track.add(waypoint);
+                Log.d(TAG, "New waypoint: " + waypoint.toGeoJSONFeature());
+                // TODO: should the track(waypoints) also be written to a permanent file? (so that not all data is lost if the app is shut down for some reason)
 
                 // TODO: update marker on the map
 
                 // TODO: update track on map
+                // https://github.com/osmdroid/osmdroid/blob/master/osmdroid-android/src/main/java/org/osmdroid/views/overlay/Polyline.java
+                trackOverlay.addPoint(new GeoPoint(location));
+                mapView.invalidate();
+                /*
+                    Troubleshooting:
+                    - Added two points before invalidating map
+                    - used an ArrayList instead
+                    - Adding points in SetupMap() instead of here
+                 */
+
 
             }
 
