@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.nfc.Tag;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -47,7 +46,6 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     // Navigation menu
@@ -157,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Add a MyLocation overlay
         this.myLocationNewOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this),mapView);
         this.myLocationNewOverlay.enableMyLocation();
-        //mapView.getOverlays().add(this.myLocationNewOverlay);//TODO: remove comments
+        mapView.getOverlays().add(this.myLocationNewOverlay);//TODO: different marker?
 
         // Add a compass overlay
         this.compassOverlay = new CompassOverlay(this, new InternalCompassOrientationProvider(this), mapView);
@@ -178,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // Setup the overlay that will display the track
         trackOverlay = new Polyline(mapView);
-        trackOverlay.setColor(R.color.colorTrack);//TODO: the color doesnt change
+        trackOverlay.setColor(0xFFCC14C6);//AlphaRGB
         trackOverlay.setWidth(10f);//width in pixels
         mapView.getOverlays().add(trackOverlay);
 
@@ -412,18 +410,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 // TODO: update marker on the map
 
                 // Update track on map
-                // https://github.com/osmdroid/osmdroid/blob/master/osmdroid-android/src/main/java/org/osmdroid/views/overlay/Polyline.java
                 trackOverlay.addPoint(new GeoPoint(location));
-                //trackOverlay.addPoint(new GeoPoint(63.419780, 10.401765));
                 mapView.invalidate();
-                /*
-                    Troubleshooting:
-                    - Added two points before invalidating map
-                    - used an ArrayList instead
-                    - Adding points in SetupMap() instead of here
-                 */
-
-
             }
 
             @Override
