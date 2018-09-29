@@ -25,6 +25,8 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
@@ -179,6 +181,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         trackOverlay.setColor(0xFFCC14C6);//AlphaRGB
         trackOverlay.setWidth(10f);//width in pixels
         mapView.getOverlays().add(trackOverlay);
+
+        // Setup button that can be clicked to add an observation.
+        ImageButton newObservation = findViewById(R.id.new_observation);
+        newObservation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "new observation clicked ");
+
+            }
+        });
+
 
         // Move the map to the starting position.
         //TODO: start at current GPS position, "else" start at last position, "else" start at some default location
@@ -406,8 +419,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 track.add(waypoint);
                 Log.d(TAG, "New waypoint: " + waypoint.toGeoJSONFeature());
                 // TODO: should the track(waypoints) also be written to a permanent file? (so that not all data is lost if the app is shut down for some reason)
-
-                // TODO: update marker on the map
 
                 // Update track on map
                 trackOverlay.addPoint(new GeoPoint(location));
