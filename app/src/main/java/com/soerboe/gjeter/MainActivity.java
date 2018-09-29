@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.nfc.Tag;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -176,10 +177,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mapView.setMinZoomLevel(6.0); // No point in being able to see more than Norway.
 
         // Setup the overlay that will display the track
-        //TODO: this doesn't work for some reason
         trackOverlay = new Polyline(mapView);
-        trackOverlay.setColor(0xB40431);
-        trackOverlay.setWidth(20f);
+        trackOverlay.setColor(R.color.colorTrack);//TODO: the color doesnt change
+        trackOverlay.setWidth(10f);//width in pixels
         mapView.getOverlays().add(trackOverlay);
 
         // Move the map to the starting position.
@@ -411,9 +411,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 // TODO: update marker on the map
 
-                // TODO: update track on map
+                // Update track on map
                 // https://github.com/osmdroid/osmdroid/blob/master/osmdroid-android/src/main/java/org/osmdroid/views/overlay/Polyline.java
                 trackOverlay.addPoint(new GeoPoint(location));
+                //trackOverlay.addPoint(new GeoPoint(63.419780, 10.401765));
                 mapView.invalidate();
                 /*
                     Troubleshooting:
