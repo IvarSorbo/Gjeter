@@ -12,9 +12,8 @@ import java.util.Date;
 public class Waypoint extends GeoPoint{
     private Date time;
 
-    public Waypoint(Location location, Date time){
-        //this.geoPoint = geopoint;
-        super(location);
+    public Waypoint(GeoPoint geoPoint, Date time){
+        super(geoPoint);
         this.time = time;
     }
 

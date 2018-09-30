@@ -8,6 +8,7 @@
     tools:context=".MainActivity"
     android:id="@+id/drawer_layout">
 
+    <!-- MapView -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -15,6 +16,8 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" />
     </LinearLayout>
+
+    <!-- The "+" button for adding a new observation -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -33,6 +36,7 @@
             android:cropToPadding="true" />
     </RelativeLayout>
 
+    <!-- Navigation View that can be dragged in from the left -->
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
@@ -42,5 +46,59 @@
         app:headerLayout="@layout/nav_header">
 
     </android.support.design.widget.NavigationView>
+
+    <!-- A crosshair in the middle of the screen -->
+    <LinearLayout
+        android:id="@+id/crosshair_horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerInParent="true"
+        android:foregroundGravity="center"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="invisible">
+
+        <View
+            android:layout_width="25dp"
+            android:layout_height="3dp"
+            android:background="@android:color/holo_red_dark"
+            />
+        <View
+            android:layout_width="11dp"
+            android:layout_height="3dp"
+            android:background="@android:color/transparent"
+            />
+        <View
+            android:layout_width="25dp"
+            android:layout_height="3dp"
+            android:background="@android:color/holo_red_dark"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/crosshair_vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerInParent="true"
+        android:foregroundGravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <View
+            android:layout_width="3dp"
+            android:layout_height="25dp"
+            android:background="@android:color/holo_red_dark"
+            />
+        <View
+            android:layout_width="3dp"
+            android:layout_height="11dp"
+            android:background="@android:color/transparent"
+            />
+        <View
+            android:layout_width="3dp"
+            android:layout_height="25dp"
+            android:background="@android:color/holo_red_dark"
+            />
+    </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>

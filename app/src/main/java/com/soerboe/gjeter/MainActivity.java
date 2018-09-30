@@ -187,8 +187,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         newObservation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "new observation clicked ");
-
+                Log.i(TAG, "New observation (+) button clicked ");
+                startObservationDialog();
             }
         });
 
@@ -415,7 +415,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onLocationChanged(Location location) {
                 // Called whenever the location is updated
                 // Store the new location in a list of waypoints.
-                Waypoint waypoint = new Waypoint(location, new Date(System.currentTimeMillis()));
+                Waypoint waypoint = new Waypoint(
+                        new GeoPoint(location.getLatitude(), location.getLongitude()),
+                        new Date(System.currentTimeMillis()));
                 track.add(waypoint);
                 Log.d(TAG, "New waypoint: " + waypoint.toGeoJSONFeature());
                 // TODO: should the track(waypoints) also be written to a permanent file? (so that not all data is lost if the app is shut down for some reason)
@@ -450,6 +452,51 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 locationListener);
     }
 
+    private void startObservationDialog(){
+        // This is called when the "+" button is clicked
+
+        // Show a crosshair in the middle of the screen
+        showCrosshair(true);
+
+        // TODO: need a confirm/cancel button at the bottom of the screen
+        // When "confirm" is clicked; markObservation() is called
+
+        // When "cancel" is clicked; remove crosshair and return
+    }
+
+    private void markObservation(){
+        // This is called when the observation is confirmed
+
+        // Find the coordinates of the middle of the screen
+        Waypoint observation_point = new Waypoint(
+                new GeoPoint(mapView.getMapCenter().getLatitude(), mapView.getMapCenter().getLongitude()),
+                new Date(System.currentTimeMillis())
+        );
+
+        // TODO: Store the observation somewhere
+        Observation observation = new Observation(observation_point, 0);
+
+
+        // TODO: Make a marker on the map
+
+        // TODO: Draw a Polyline between the current position and the observed position
+
+        // TODO: Query the user for more information about the observation
+
+    }
+
+    private void showCrosshair(boolean show){
+        View horizontal = findViewById(R.id.crosshair_horizontal);
+        View vertical = findViewById(R.id.crosshair_vertical);
+
+        if (show) {
+            horizontal.setVisibility(View.VISIBLE);
+            vertical.setVisibility(View.VISIBLE);
+        } else{
+            horizontal.setVisibility(View.INVISIBLE);
+            vertical.setVisibility(View.INVISIBLE);
+        }
+    }
 }
 
 /*
