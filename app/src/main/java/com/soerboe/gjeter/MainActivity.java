@@ -39,6 +39,7 @@ import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
@@ -513,8 +514,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // TODO: Store the observation somewhere
         Observation observation = new Observation(observation_point, 0);
 
-        // TODO: Make a marker on the map
-        
+        // Make a marker on the map
+        Marker observationMarker = new Marker(mapView);
+        observationMarker.setPosition(observation_point);
+        observationMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        observationMarker.setIcon(getResources().getDrawable(R.drawable.ic_baseline_place_24px));
+        observationMarker.setTitle("TODO: 522");
+        mapView.getOverlays().add(observationMarker);
+
 
         // TODO: Draw a Polyline between the current position and the observed position
 
