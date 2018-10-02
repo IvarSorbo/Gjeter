@@ -26,6 +26,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -74,6 +75,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private LocationListener locationListener; //Listens for location changes
     private ArrayList<Waypoint> track = new ArrayList<>(); //Stores the track
 
+    private ImageButton newObservation;
+    private View confirm_cancel_buttons;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SetupLocationListener();
 
         mapView = findViewById(R.id.map);
+        newObservation = findViewById(R.id.new_observation);
+        confirm_cancel_buttons = findViewById(R.id.confirm_cancel_buttons);
 
         //TODO Handle permissions (location access is only needed if GPS is used. Write access is needed for all use of the app)
 
@@ -183,7 +189,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mapView.getOverlays().add(trackOverlay);
 
         // Setup button that can be clicked to add an observation.
-        ImageButton newObservation = findViewById(R.id.new_observation);
         newObservation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -458,10 +463,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Show a crosshair in the middle of the screen
         showCrosshair(true);
 
-        // TODO: need a confirm/cancel button at the bottom of the screen
-        // When "confirm" is clicked; markObservation() is called
+        // Remove the "+" button
+        newObservation.setVisibility(View.INVISIBLE);
 
-        // When "cancel" is clicked; remove crosshair and return
+        // Show the confirm/cancel button at the bottom of the screen
+        confirm_cancel_buttons.setVisibility(View.VISIBLE);
+
+        // When "confirm" is clicked; markObservation() is called
+        Button bt_confirm = findViewById(R.id.bt_confirm);
+        Button bt_cancel = findViewById(R.id.bt_cancel);
+
+        bt_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cleanupObservationDialog();
+                // Mark the selected spot as an observation
+                markObservation();
+            }
+        });
+        bt_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cleanupObservationDialog();
+            }
+        });
+    }
+
+    /**
+     * Cleanup the view after the startObservationDialog is done
+     */
+    private void cleanupObservationDialog(){
+        // Remove crosshair
+        showCrosshair(false);
+        // Remove cancel/confirm buttons
+        confirm_cancel_buttons.setVisibility(View.INVISIBLE);
+        // Show the "+" button
+        newObservation.setVisibility(View.VISIBLE);
     }
 
     private void markObservation(){
@@ -476,8 +513,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // TODO: Store the observation somewhere
         Observation observation = new Observation(observation_point, 0);
 
-
         // TODO: Make a marker on the map
+        
 
         // TODO: Draw a Polyline between the current position and the observed position
 
