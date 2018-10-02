@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // Add default zoom buttons and ability to zoom with 2 fingers.
         mapView.setBuiltInZoomControls(true);
-        mapView.setMultiTouchControls(true);
+        mapView.setMultiTouchControls(false);
 
         // Add a MyLocation overlay
         this.myLocationNewOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this),mapView);
@@ -523,7 +523,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mapView.getOverlays().add(observationMarker);
 
 
-        // TODO: Draw a Polyline between the current position and the observed position
+        // Draw a Polyline between the current position and the observed position
+        if (track.size() > 0){
+            Polyline line = new Polyline(mapView);
+            line.addPoint(track.get(track.size()-1));
+            line.addPoint(observation_point);
+            line.setColor(0xFF000000);//AlphaRGB
+            line.setWidth(7f);//width in pixels
+            mapView.getOverlays().add(line);
+            mapView.invalidate();
+        }
 
         // TODO: Query the user for more information about the observation
 
