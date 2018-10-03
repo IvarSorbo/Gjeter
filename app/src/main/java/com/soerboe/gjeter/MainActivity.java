@@ -593,7 +593,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == obs_activity_request_code){
-            if (resultCode == 0) {
+            if (resultCode == 10) {
                 Log.d(TAG, "\nResult from the Observation Activity:\n" + data.getExtras().get("result").toString());
             } else{
                 Log.d(TAG, "\nThe observation activity returned a bad resultCode");
