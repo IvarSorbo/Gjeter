@@ -1,11 +1,20 @@
 package com.soerboe.gjeter;
 
 /**
- * Either make this an interface for observation-classes
- * or make this the "superclass" of more specific observatino-classes
- * e.g., SheepObservation, PredatorObservation, HunterObservation, ...
+ * TODO: make this into an interface that the specific observation-classes can inherit from.
+ * Need:
+ * - A type field
+ * - A total number field
+ * - A toString field which returns all the info in a neat format
+ * - A (double) distance which should be sent along if the user switches between observation-type
+ *
+ * - Also need to define some constants (this should be defined somewhere else though)
+ * -- LONG_DISTANCE
+ * -- The different types
  */
 public class Observation {
+    public static int LONG_DISTANCE = 200;
+
     private Waypoint waypoint;
     private int count;
 

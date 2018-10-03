@@ -140,6 +140,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mapView.onPause();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //TODO: Save the state
+    }
+
     /**
      * Center the map
      */
@@ -502,6 +508,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         newObservation.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Marks the confirmed observation on the map and asks the user to fill in more info
+     * about the observation.
+     */
     private void markObservation(){
         // This is called when the observation is confirmed
 
@@ -522,20 +532,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         observationMarker.setTitle("TODO: 522");
         mapView.getOverlays().add(observationMarker);
 
-
         // Draw a Polyline between the current position and the observed position
         if (track.size() > 0){
+            GeoPoint current_position = track.get(track.size()-1);
+
             Polyline line = new Polyline(mapView);
-            line.addPoint(track.get(track.size()-1));
+            line.addPoint(current_position);
             line.addPoint(observation_point);
             line.setColor(0xFF000000);//AlphaRGB
             line.setWidth(7f);//width in pixels
             mapView.getOverlays().add(line);
             mapView.invalidate();
+
+
+            // Query the user for more information about the observation
+            double distance = observation_point.distanceToAsDouble(current_position);
+            if(distance >= Observation.LONG_DISTANCE){
+                // The observation is too far away to see much detail
+                // TODO: switch to the observaion-form and build a minimal-detail form for the user to fill in
+                Log.d(TAG, "The observation is farther away than LONG_DISTANCE");
+            } else {
+                // The observation is close enough to see some detail
+                // TODO: switch to the observaion-form and build a detailed form for the user to fill in
+                Log.d(TAG, "The observation is closer than LONG_DISTANCE");
+            }
         }
 
-        // TODO: Query the user for more information about the observation
-
+        //
     }
 
     private void showCrosshair(boolean show){
