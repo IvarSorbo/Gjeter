@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -79,9 +80,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ImageButton newObservation;
     private View confirm_cancel_buttons;
 
+    private int LONG_DISTANCE;
+    private int obs_activity_request_code = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LONG_DISTANCE = getResources().getInteger(R.integer.LONG_DISTANCE);
 
         // Load/initialize the osmdroid configuration
         Context ctx = getApplicationContext();
@@ -547,15 +552,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             // Query the user for more information about the observation
             double distance = observation_point.distanceToAsDouble(current_position);
-            if(distance >= R.integer.LONG_DISTANCE){
+            if(distance >= LONG_DISTANCE){
                 // The observation is too far away to see much detail
                 // TODO: switch to the observaion-form and build a minimal-detail form for the user to fill in
                 Log.d(TAG, "The observation is farther away than LONG_DISTANCE");
+                startObservationActivity(distance);
             } else {
                 // The observation is close enough to see some detail
                 // TODO: switch to the observaion-form and build a detailed form for the user to fill in
                 Log.d(TAG, "The observation is closer than LONG_DISTANCE");
+                startObservationActivity(distance);
             }
+        }else{
+            startObservationActivity(LONG_DISTANCE + 1);
         }
 
         //
@@ -571,6 +580,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else{
             horizontal.setVisibility(View.INVISIBLE);
             vertical.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void startObservationActivity(double distance){
+        Intent obs_activity = new Intent(this, ObservationActivity.class);
+        obs_activity.putExtra("distance", distance); // Sending a parameter to the activity
+        startActivityForResult(obs_activity, obs_activity_request_code);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == obs_activity_request_code){
+            if (resultCode == 0) {
+                Log.d(TAG, "\nResult from the Observation Activity:\n" + data.getExtras().get("result").toString());
+            } else{
+                Log.d(TAG, "\nThe observation activity returned a bad resultCode");
+                Log.d(TAG, "resultCode: "+resultCode);
+            }
         }
     }
 }
