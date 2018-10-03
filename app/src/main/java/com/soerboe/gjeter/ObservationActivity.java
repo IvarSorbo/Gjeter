@@ -5,11 +5,15 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 
-public class ObservationActivity extends AppCompatActivity {
+public class ObservationActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     // Tag used in debug messages
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -17,6 +21,9 @@ public class ObservationActivity extends AppCompatActivity {
     private int LONG_DISTANCE;
 
     private boolean success = false;
+
+    private Toolbar toolbar;
+    private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +33,7 @@ public class ObservationActivity extends AppCompatActivity {
 
         LONG_DISTANCE  = res.getInteger(R.integer.LONG_DISTANCE);
 
+        /*
         // Getting the list of observation-types
         TypedArray res_obs_types = res.obtainTypedArray(R.array.observation_types_nb);
         int number_of_types = res_obs_types.length();
@@ -33,11 +41,22 @@ public class ObservationActivity extends AppCompatActivity {
         for (int i = 0; i < number_of_types; i++){
             obs_types[i] = res_obs_types.getString(i);
         }
-        res_obs_types.recycle();
+        res_obs_types.recycle();*/
 
-        // Changing the title
-        setTitle(obs_types[0]);
+        // Changing ActionBar
+        toolbar = findViewById(R.id.toolbar_obs);
+        spinner = findViewById(R.id.spinner_nav_obs);
 
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+
+        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(this,
+                R.array.observation_types_nb, R.layout.spinner_item);
+        arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        spinner.setAdapter(arrayAdapter);
+        spinner.setOnItemSelectedListener(this);
 
         // Getting the distance that was set in MainActivity
         Intent i = getIntent();
@@ -71,4 +90,14 @@ public class ObservationActivity extends AppCompatActivity {
             setResult(0, data);
         }
     }
+
+    //OnItemSelectedListener classes:
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String selected = parent.getItemAtPosition(position).toString();
+        Log.d(TAG, "User selected: " + selected);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {  }
 }

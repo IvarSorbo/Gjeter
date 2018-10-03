@@ -16,4 +16,7 @@
             android:layout_height="wrap_content"
             android:text="Back" />
     </RelativeLayout>
+    <include
+        android:id="@+id/toolbar_obs"
+        layout="@layout/toolbar_spinner"/>
 </android.support.constraint.ConstraintLayout>
