@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<array name="observation_types">
-    <item>sheep_herd</item>
-    <item>dead_sheep</item>
-    <item>predator</item>
-    <item>hunter</item>
-    <item>other_wildlife</item>
+<array name="observation_types_nb">
+    <item>Saueflokk</item>
+    <item>Død sau</item>
+    <item>Rovdyr</item>
+    <item>Jeger</item>
+    <item>Annet</item>
 </array>
+<!--TODO: make an english version -->
 </resources>

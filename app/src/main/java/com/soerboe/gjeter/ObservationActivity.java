@@ -1,6 +1,8 @@
 package com.soerboe.gjeter;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,8 +22,22 @@ public class ObservationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_observation);
+        Resources res = getResources();
 
-        LONG_DISTANCE  = getResources().getInteger(R.integer.LONG_DISTANCE);
+        LONG_DISTANCE  = res.getInteger(R.integer.LONG_DISTANCE);
+
+        // Getting the list of observation-types
+        TypedArray res_obs_types = res.obtainTypedArray(R.array.observation_types_nb);
+        int number_of_types = res_obs_types.length();
+        String[] obs_types = new String[number_of_types];
+        for (int i = 0; i < number_of_types; i++){
+            obs_types[i] = res_obs_types.getString(i);
+        }
+        res_obs_types.recycle();
+
+        // Changing the title
+        setTitle(obs_types[0]);
+
 
         // Getting the distance that was set in MainActivity
         Intent i = getIntent();
