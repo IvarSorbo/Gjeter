@@ -13,8 +13,6 @@ package com.soerboe.gjeter;
  * -- The different types
  */
 public class Observation {
-    public static int LONG_DISTANCE = 200;
-
     private Waypoint waypoint;
     private int count;
 

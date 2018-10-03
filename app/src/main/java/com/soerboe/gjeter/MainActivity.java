@@ -547,7 +547,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             // Query the user for more information about the observation
             double distance = observation_point.distanceToAsDouble(current_position);
-            if(distance >= Observation.LONG_DISTANCE){
+            if(distance >= R.integer.LONG_DISTANCE){
                 // The observation is too far away to see much detail
                 // TODO: switch to the observaion-form and build a minimal-detail form for the user to fill in
                 Log.d(TAG, "The observation is farther away than LONG_DISTANCE");
