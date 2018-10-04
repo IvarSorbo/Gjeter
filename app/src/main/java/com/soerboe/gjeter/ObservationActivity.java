@@ -73,11 +73,6 @@ public class ObservationActivity extends AppCompatActivity implements AdapterVie
                 goBack();
             }
         });
-
-        // Change fragment
-        Fragment a = new SheepHerdFragment();
-        changeFragment(a);
-        Log.d(TAG,"SheepHerdFragment says: " + ((SheepHerdFragment) a).sayHello());
     }
 
     private void goBack(){
@@ -102,6 +97,28 @@ public class ObservationActivity extends AppCompatActivity implements AdapterVie
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String selected = parent.getItemAtPosition(position).toString();
         Log.d(TAG, "User selected: " + selected);
+        switch (selected){
+            case "Saueflokk":{
+                changeFragment(new SheepHerdFragment());
+                break;
+            }
+            case "Død sau":{
+                changeFragment(new DeadSheepFragment());
+                break;
+            }
+            case "Rovdyr":{
+                changeFragment(new PredatorFragment());
+                break;
+            }
+            case "Jeger":{
+                changeFragment(new HunterFragment());
+                break;
+            }
+            case "Annet":{
+                changeFragment(new OtherFragment());
+                break;
+            }
+        }
     }
 
     @Override
