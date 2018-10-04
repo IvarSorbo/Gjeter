@@ -1,8 +1,9 @@
 package com.soerboe.gjeter;
 
+import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -72,6 +73,11 @@ public class ObservationActivity extends AppCompatActivity implements AdapterVie
                 goBack();
             }
         });
+
+        // Change fragment
+        Fragment a = new SheepHerdFragment();
+        changeFragment(a);
+        Log.d(TAG,"SheepHerdFragment says: " + ((SheepHerdFragment) a).sayHello());
     }
 
     private void goBack(){
@@ -100,4 +106,16 @@ public class ObservationActivity extends AppCompatActivity implements AdapterVie
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {  }
+
+    private void changeFragment(Fragment newFragment){
+        // Create new transaction
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        // Replace the content of fragment_container with newFragment
+        transaction.replace(R.id.fragment_container, newFragment);
+        //transaction.addToBackStack(null); // No need to add the fragment to the back stack
+
+        // Commit the transaction
+        transaction.commit();
+    }
 }

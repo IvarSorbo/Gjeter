@@ -8,15 +8,23 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="bottom">
+        android:layout_height="match_parent">
+        <include
+            android:id="@+id/toolbar_obs"
+            layout="@layout/toolbar_spinner"/>
+        <RelativeLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/toolbar_obs"></RelativeLayout>
         <Button
             android:id="@+id/bt_obs_back"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/fragment_container"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
             android:text="Back" />
     </RelativeLayout>
-    <include
-        android:id="@+id/toolbar_obs"
-        layout="@layout/toolbar_spinner"/>
+
 </android.support.constraint.ConstraintLayout>
