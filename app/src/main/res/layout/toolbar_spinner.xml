@@ -9,7 +9,7 @@
     android:minHeight="?attr/actionBarSize"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
     >
-
+    <!--TODO: change color of the "triangle-thingy" in the top right corner to something more visible-->
     <Spinner
         android:id="@+id/spinner_nav_obs"
         android:layout_width="fill_parent"

@@ -1,25 +1,46 @@
 package com.soerboe.gjeter;
 
+import org.osmdroid.util.GeoPoint;
+
 /**
- * TODO: make this into an interface that the specific observation-classes can inherit from.
- * Need:
- * - A type field
- * - A total number field
- * - A toString field which returns all the info in a neat format
- * - A (double) distance which should be sent along if the user switches between observation-type
- *
- * - Also need to define some constants (this should be defined somewhere else though)
- * -- LONG_DISTANCE
- * -- The different types
+ * This is the superclass in which all the specific observation classes inherit from
  */
 public class Observation {
+    private String observationType;
+    private int totalCount;
     private Waypoint waypoint;
-    private int count;
+    private GeoPoint myPosition;
 
-    public Observation(Waypoint waypoint, int count){
+    public Observation(Waypoint waypoint, GeoPoint myPosition){
         this.waypoint = waypoint;
-        this.count = count;
+        this.myPosition = myPosition;
     }
 
+    // Getters and setters:
+    public void setObservationType(String observationType) {
+        this.observationType = observationType;
+    }
+
+    public void setTotalCount(int totalCount) {
+        this.totalCount = totalCount;
+    }
+
+    public String getObservationType() {
+        return observationType;
+    }
+
+    public int getTotalCount() {
+        return totalCount;
+    }
+
+    public Waypoint getWaypoint() {
+        return waypoint;
+    }
+
+    public GeoPoint getMyPosition() {
+        return myPosition;
+    }
+
+    //String toJSON();
 }
 
