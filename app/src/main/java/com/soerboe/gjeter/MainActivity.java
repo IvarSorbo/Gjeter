@@ -80,13 +80,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ImageButton newObservation;
     private View confirm_cancel_buttons;
 
-    private int LONG_DISTANCE;
     private int obs_activity_request_code = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LONG_DISTANCE = getResources().getInteger(R.integer.LONG_DISTANCE);
 
         // Load/initialize the osmdroid configuration
         Context ctx = getApplicationContext();
@@ -518,16 +516,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * about the observation.
      */
     private void markObservation(){
-        // This is called when the observation is confirmed
-
         // Find the coordinates of the middle of the screen
         Waypoint observation_point = new Waypoint(
                 new GeoPoint(mapView.getMapCenter().getLatitude(), mapView.getMapCenter().getLongitude()),
                 new Date(System.currentTimeMillis())
         );
-
-        // TODO: Store the observation somewhere
-        Observation observation = new Observation(observation_point, 0);
 
         // Make a marker on the map
         Marker observationMarker = new Marker(mapView);
@@ -537,37 +530,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         observationMarker.setTitle("TODO: 522");
         mapView.getOverlays().add(observationMarker);
 
+        GeoPoint myPosition;
+
         // Draw a Polyline between the current position and the observed position
         if (track.size() > 0){
-            GeoPoint current_position = track.get(track.size()-1);
+            myPosition = track.get(track.size()-1);
 
             Polyline line = new Polyline(mapView);
-            line.addPoint(current_position);
+            line.addPoint(myPosition);
             line.addPoint(observation_point);
             line.setColor(0xFF000000);//AlphaRGB
             line.setWidth(7f);//width in pixels
             mapView.getOverlays().add(line);
             mapView.invalidate();
-
-
-            // Query the user for more information about the observation
-            double distance = observation_point.distanceToAsDouble(current_position);
-            if(distance >= LONG_DISTANCE){
-                // The observation is too far away to see much detail
-                // TODO: switch to the observaion-form and build a minimal-detail form for the user to fill in
-                Log.d(TAG, "The observation is farther away than LONG_DISTANCE");
-                startObservationActivity(distance);
-            } else {
-                // The observation is close enough to see some detail
-                // TODO: switch to the observaion-form and build a detailed form for the user to fill in
-                Log.d(TAG, "The observation is closer than LONG_DISTANCE");
-                startObservationActivity(distance);
-            }
-        }else{
-            startObservationActivity(LONG_DISTANCE + 1);
+        }else {
+            // TODO: warn the user?
+            myPosition = new GeoPoint(0.0,0.0);
         }
 
-        //
+        startObservationActivity(observation_point, myPosition);
     }
 
     private void showCrosshair(boolean show){
@@ -583,12 +564,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void startObservationActivity(double distance){
+    /**
+     * Put observed position and my position onto an ObservationActivity and start the activity.
+     * @param obs_pos Marked position of the observation
+     * @param my_pos Position of the user
+     */
+    private void startObservationActivity(GeoPoint obs_pos, GeoPoint my_pos){
         Intent obs_activity = new Intent(this, ObservationActivity.class);
-        obs_activity.putExtra("distance", distance); // Sending a parameter to the activity
+        obs_activity.putExtra(Constants.OBS_LAT, obs_pos.getLatitude());
+        obs_activity.putExtra(Constants.OBS_LNG, obs_pos.getLongitude());
+        obs_activity.putExtra(Constants.MY_LAT, my_pos.getLatitude());
+        obs_activity.putExtra(Constants.MY_LNG, my_pos.getLongitude());
+
         startActivityForResult(obs_activity, obs_activity_request_code);
     }
 
+    // TODO: fix the return value
+    // TODO: store the returned value somewhere
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

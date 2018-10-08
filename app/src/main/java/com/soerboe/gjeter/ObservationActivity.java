@@ -1,11 +1,9 @@
 package com.soerboe.gjeter;
 
+import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -14,25 +12,30 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
-public class ObservationActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+import org.osmdroid.util.GeoPoint;
+
+import java.util.Date;
+
+public class ObservationActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, SheepHerdFragment.MoreDetailsListener {
     // Tag used in debug messages
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = ObservationActivity.class.getSimpleName();
 
     private Intent data = new Intent();
-    private int LONG_DISTANCE;
 
     private boolean success = false;
 
     private Toolbar toolbar;
     private Spinner spinner;
 
+    private Observation observation;
+
+    private MyFragment fragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_observation);
-        Resources res = getResources();
-
-        LONG_DISTANCE  = res.getInteger(R.integer.LONG_DISTANCE);
+        //Resources res = getResources();
 
         /*
         // Getting the list of observation-types
@@ -43,6 +46,9 @@ public class ObservationActivity extends AppCompatActivity implements AdapterVie
             obs_types[i] = res_obs_types.getString(i);
         }
         res_obs_types.recycle();*/
+
+        // Getting the distance that was set in MainActivity
+        observation = getObservationFromIntent();
 
         // Changing ActionBar
         toolbar = findViewById(R.id.toolbar_obs);
@@ -59,25 +65,57 @@ public class ObservationActivity extends AppCompatActivity implements AdapterVie
         spinner.setAdapter(arrayAdapter);
         spinner.setOnItemSelectedListener(this);
 
-        // Getting the distance that was set in MainActivity
-        Intent i = getIntent();
-        double distance = i.getDoubleExtra("distance", LONG_DISTANCE + 2);
-
-        data.putExtra("result", "The input distance: " + distance);
-
-        Button bt_back = findViewById(R.id.bt_obs_back);
-        bt_back.setOnClickListener(new View.OnClickListener() {
+        // Setting up the "save"-button:
+        Button bt_save = findViewById(R.id.bt_obs_save);
+        bt_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Switch back to the main activity
-                goBack();
+                sendBackResult();
             }
         });
     }
 
-    private void goBack(){
-        // Return resultCode 0 if successful
-        Log.d(TAG, "goBack()");
+    /**
+     * Fetches data from the Intent.
+     * MainActivity sends the positions of the observation and of the user.
+     * @return Observation
+     */
+    private Observation getObservationFromIntent(){
+        Intent i = getIntent();
+        double obs_lat = i.getDoubleExtra(Constants.OBS_LAT, 0.0);
+        double obs_lng = i.getDoubleExtra(Constants.OBS_LNG, 0.0);
+        double my_lat = i.getDoubleExtra(Constants.MY_LAT, 0.0);
+        double my_lng = i.getDoubleExtra(Constants.MY_LNG, 0.0);
+        return new Observation(
+                new GeoPoint(obs_lat, obs_lng),
+                new GeoPoint(my_lat, my_lng),
+                new Date(System.currentTimeMillis())
+        );
+    }
+
+    /**
+     * This can be called from the fragments to get the initial Observation-object
+     * @return Observation
+     */
+    protected Observation getObservation() {
+        if (observation == null){
+            observation = getObservationFromIntent();
+        }
+        return observation;
+    }
+
+    /**
+     * Gets the result from the current fragment, adds it to the returned intent and
+     * finishes the activity.
+     */
+    private void sendBackResult(){
+        String result = fragment.toJSON();
+
+        // Return resultCode 10 if successful
+        Log.d(TAG, "\nsendBackResult() is returning:\n" + result);
+
+        data.putExtra("result", result);
         setResult(10, data);
         success = true;
         finish();
@@ -87,12 +125,13 @@ public class ObservationActivity extends AppCompatActivity implements AdapterVie
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy()");
+        //TODO: could try to sendBackResult if !success
         if (!success){
             setResult(0, data);
         }
     }
 
-    //OnItemSelectedListener classes:
+    //OnItemSelectedListener methods:
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String selected = parent.getItemAtPosition(position).toString();
@@ -118,13 +157,25 @@ public class ObservationActivity extends AppCompatActivity implements AdapterVie
                 changeFragment(new OtherFragment());
                 break;
             }
+            default: {
+                changeFragment(new SheepHerdFragment());
+            }
         }
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {  }
 
-    private void changeFragment(Fragment newFragment){
+    /**
+     * Replaces the current fragment and updates the "fragment" variable
+     * @param newFragment the fragment that is to replace the current fragment
+     */
+    private void changeFragment(MyFragment newFragment){
+        Log.d(TAG, "Switching fragment to " + newFragment.getClass().getSimpleName());
+
+        // Update the local variable
+        fragment = newFragment;
+
         // Create new transaction
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -134,5 +185,12 @@ public class ObservationActivity extends AppCompatActivity implements AdapterVie
 
         // Commit the transaction
         transaction.commit();
+    }
+
+    // SheepHerdFragment method:
+    @Override
+    public void onMoreDetailsClicked(SheepHerdObservation sheepHerdObs) {
+        //This is a listener that must handle the event that "more details" were clicked
+        changeFragment(new SheepHerdDetailedFragment());
     }
 }

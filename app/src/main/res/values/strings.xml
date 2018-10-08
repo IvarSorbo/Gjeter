@@ -11,6 +11,4 @@
     <string name="confirm">Confirm</string>
 
     <string name="bt_new_observation_description">New observation</string>
-
-    <integer name="LONG_DISTANCE">200</integer>
 </resources>

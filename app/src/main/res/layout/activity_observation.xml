@@ -18,13 +18,13 @@
             android:layout_height="match_parent"
             android:layout_below="@id/toolbar_obs"></RelativeLayout>
         <Button
-            android:id="@+id/bt_obs_back"
-            android:layout_width="wrap_content"
+            android:id="@+id/bt_obs_save"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/fragment_container"
             android:layout_marginLeft="10dp"
             android:layout_marginBottom="10dp"
-            android:text="Back" />
+            android:text="Lagre" />
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -1,7 +1,5 @@
 package com.soerboe.gjeter;
 
-import android.location.Location;
-
 import org.osmdroid.util.GeoPoint;
 
 import java.util.Date;
