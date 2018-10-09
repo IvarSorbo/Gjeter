@@ -138,7 +138,15 @@ public class ObservationActivity extends AppCompatActivity implements AdapterVie
         Log.d(TAG, "User selected: " + selected);
         switch (selected){
             case "Saueflokk":{
-                changeFragment(new SheepHerdFragment());
+                // Show different fragments based on the distance to the observation:
+                // (if user's position is unknown it will be set to 0.0,0.0 which will be far away
+                // from any observation-location in Norway. Thus, the long-distance fragment will
+                // be shown if the user's position is unknown)
+                if (observation.getDistance() > Constants.LONG_DISTANCE){
+                    changeFragment(new SheepHerdFragment());
+                }else{
+                    changeFragment(new SheepHerdDetailedFragment());
+                }
                 break;
             }
             case "Død sau":{
