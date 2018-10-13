@@ -1,6 +1,6 @@
 package com.soerboe.gjeter;
 
-import android.support.annotation.NonNull;
+import com.google.gson.Gson;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -10,10 +10,15 @@ import java.util.Date;
 public class SheepHerdDetailedObservation extends SheepHerdObservation {
     private int lambCount;
     private int lambOriginalCount;
-    private ArrayList<Tuple> owners;
+    private ArrayList<EarTag> earTags = new ArrayList<>();
 
     public SheepHerdDetailedObservation(GeoPoint obsPosition, GeoPoint myPosition, Date time) {
         super(obsPosition, myPosition, time);
+        //TODO: should the observationType be the same as for super?
+    }
+
+    public SheepHerdDetailedObservation(SheepHerdObservation sheepHerdObservation){
+        super(sheepHerdObservation);
     }
 
     public SheepHerdDetailedObservation(Observation o) {
@@ -28,10 +33,6 @@ public class SheepHerdDetailedObservation extends SheepHerdObservation {
         return lambOriginalCount;
     }
 
-    public ArrayList<Tuple> getOwners() {
-        return owners;
-    }
-
     public void setLambCount(int lambCount) {
         this.lambCount = lambCount;
     }
@@ -40,53 +41,29 @@ public class SheepHerdDetailedObservation extends SheepHerdObservation {
         this.lambOriginalCount = lambOriginalCount;
     }
 
-    public void addOwner(Tuple owner) {
-        this.owners.add(owner);
+    public void updateEarTags(EarTag newEarTag){
+        // Check if the earTag is already in the list, if it is, update it
+        for(EarTag et: earTags){
+            if(et.getColor().equals(newEarTag.getColor())){
+                et.setCount(newEarTag.getCount());
+                return;
+            }
+        }
+        earTags.add(newEarTag);
     }
-    // TODO: need more methods to manipulate the arraylist of owners
 
+    public void removeEarTag(EarTag inputEarTag){
+        for(EarTag et: earTags){
+            if(et.getColor().equals(inputEarTag.getColor())){
+                earTags.remove(et);
+                return;
+            }
+        }
+    }
 
     @Override
     public String toJSON() {
-        return "placeholder for detailed sheep herd observation object";//TODO create the JSON object
-    }
-
-    /**
-     * A tuple of ear tag color - count
-     */
-    public class Tuple{
-        private String earTagColor;
-        private int count;
-        public Tuple(String earTagColor, int count){
-            this.earTagColor = earTagColor;
-            this.count = count;
-        }
-
-        public String getEarTagColor() {
-            return earTagColor;
-        }
-
-        public int getCount() {
-            return count;
-        }
-
-        public void setEarTagColor(String earTagColor) {
-            this.earTagColor = earTagColor;
-        }
-
-        public void setCount(int count) {
-            this.count = count;
-        }
-
-        @NonNull
-        @Override
-        public String toString() {
-            return this.toJSON();
-        }
-
-        public String toJSON(){
-            // Ex.: {"gul":8}
-            return "{\""+ earTagColor +"\":" + this.count + "}";
-        }
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 }

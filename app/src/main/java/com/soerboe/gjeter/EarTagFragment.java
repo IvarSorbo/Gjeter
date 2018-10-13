@@ -29,6 +29,11 @@ public class EarTagFragment extends MyFragment {
         earTag.setCount(InputChecker.getInt(count, 0));
     }
 
+    public EarTag getEarTag(){
+        update();
+        return earTag;
+    }
+
     @Override
     public String toJSON() {
         update();

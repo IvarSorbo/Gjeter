@@ -37,6 +37,7 @@ public class SheepHerdFragment extends MyFragment {
             @Override
             public void onClick(View v) {
                 try{
+                    update();
                     ((MoreDetailsListener) activity).onMoreDetailsClicked(sheepHerdObservation);
                 }catch (ClassCastException cce){
                     //TODO: DoSomething

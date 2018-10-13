@@ -199,6 +199,8 @@ public class ObservationActivity extends AppCompatActivity implements AdapterVie
     @Override
     public void onMoreDetailsClicked(SheepHerdObservation sheepHerdObs) {
         //This is a listener that must handle the event that "more details" were clicked
+        observation = sheepHerdObs;
+        //Log.d(TAG, "Class of observation is now: "+observation.getClass().getCanonicalName());
         changeFragment(new SheepHerdDetailedFragment());
     }
 }

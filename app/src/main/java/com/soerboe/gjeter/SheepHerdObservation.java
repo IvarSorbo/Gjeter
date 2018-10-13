@@ -18,6 +18,15 @@ public class SheepHerdObservation extends Observation {
         this.setObservationType("Saueflokk");//TODO: this should not be hardcoded
     }
 
+    public SheepHerdObservation(SheepHerdObservation sheepHerdObservation){
+        super(sheepHerdObservation.getObsPosition(), sheepHerdObservation.getMyPosition(), sheepHerdObservation.getTime());
+        this.whiteSheepCount = sheepHerdObservation.getWhiteSheepCount();
+        this.blackSheepCount = sheepHerdObservation.getBlackSheepCount();
+        //this.brownSheepCount = sheepHerdObservation.brownSheepCount;
+        this.otherSheepCount = sheepHerdObservation.getOtherSheepCount();
+        this.setObservationType("Saueflokk");
+    }
+
     public SheepHerdObservation(Observation o){
         super(o);
         this.setObservationType("Saueflokk");//TODO: this should not be hardcoded

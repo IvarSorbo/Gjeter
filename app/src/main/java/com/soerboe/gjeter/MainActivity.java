@@ -167,8 +167,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SetupKartverketZXY();
 
         // Add default zoom buttons and ability to zoom with 2 fingers.
-        mapView.setBuiltInZoomControls(true);
-        mapView.setMultiTouchControls(false);
+        mapView.setBuiltInZoomControls(false);
+        mapView.setMultiTouchControls(true);
 
         // Add a MyLocation overlay
         this.myLocationNewOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this),mapView);
