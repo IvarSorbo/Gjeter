@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayer6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_weight="1">
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/eartag_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Øremerkefarge"
+            android:inputType="text"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayer7"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_weight="1">
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/eartag_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Antall"
+            android:inputType="number"/>
+    </android.support.design.widget.TextInputLayout>
+
+</LinearLayout>

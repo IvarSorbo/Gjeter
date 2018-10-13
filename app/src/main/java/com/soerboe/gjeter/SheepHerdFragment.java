@@ -57,26 +57,14 @@ public class SheepHerdFragment extends MyFragment {
         this.activity = getActivity();
     }
 
-    /**
-     * Returns the (integer) value found in one of the TextInputEditText objects.
-     * @param input the TextInputExitText that should be checked.
-     * @return the value found in the input field (defaults to 0)
-     */
-    private int getCount(TextInputEditText input){
-        try{
-            return Integer.valueOf(input.getText().toString());
-        } catch (Exception e){
-            return 0;
-        }
-    }
 
     /**
      * Update the SheepHerdObservation object based on the inputs.
      */
     private void update(){
-        sheepHerdObservation.setBlackSheepCount(getCount(blackCount));
-        sheepHerdObservation.setWhiteSheepCount(getCount(whiteCount));
-        sheepHerdObservation.setOtherSheepCount(getCount(otherCount));
+        sheepHerdObservation.setBlackSheepCount(InputChecker.getInt(blackCount,0));
+        sheepHerdObservation.setWhiteSheepCount(InputChecker.getInt(whiteCount,0));
+        sheepHerdObservation.setOtherSheepCount(InputChecker.getInt(otherCount,0));
     }
 
     /**
