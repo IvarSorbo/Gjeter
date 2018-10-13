@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class SheepHerdDetailedFragment extends MyFragment {
+    private SheepHerdDetailedObservation observation;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -17,6 +19,9 @@ public class SheepHerdDetailedFragment extends MyFragment {
 
     @Override
     public String toJSON() {
-        return "Hello from SheepHerdDetailedFragment";
+        //return observation.toJSON();
+        return "";
     }
+
+    //TODO: if the number of lambs observed is lower than the original number, the user should be notified
 }
