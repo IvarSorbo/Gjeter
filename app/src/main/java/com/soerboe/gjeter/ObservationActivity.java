@@ -1,5 +1,6 @@
 package com.soerboe.gjeter;
 
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
@@ -53,6 +54,7 @@ public class ObservationActivity extends AppCompatActivity implements AdapterVie
         // Changing ActionBar
         toolbar = findViewById(R.id.toolbar_obs);
         spinner = findViewById(R.id.spinner_nav_obs);
+        spinner.getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
 
         if (toolbar != null) {
             setSupportActionBar(toolbar);
