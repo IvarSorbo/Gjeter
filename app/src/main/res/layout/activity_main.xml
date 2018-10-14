@@ -61,18 +61,18 @@
         android:visibility="invisible">
 
         <View
-            android:layout_width="25dp"
-            android:layout_height="3dp"
+            android:layout_width="45dp"
+            android:layout_height="4dp"
             android:background="@android:color/holo_red_dark"
             />
         <View
             android:layout_width="11dp"
-            android:layout_height="3dp"
+            android:layout_height="4dp"
             android:background="@android:color/transparent"
             />
         <View
-            android:layout_width="25dp"
-            android:layout_height="3dp"
+            android:layout_width="45dp"
+            android:layout_height="4dp"
             android:background="@android:color/holo_red_dark"
             />
     </LinearLayout>
@@ -88,18 +88,18 @@
         android:visibility="invisible">
 
         <View
-            android:layout_width="3dp"
-            android:layout_height="25dp"
+            android:layout_width="4dp"
+            android:layout_height="45dp"
             android:background="@android:color/holo_red_dark" />
 
         <View
-            android:layout_width="3dp"
+            android:layout_width="4dp"
             android:layout_height="11dp"
             android:background="@android:color/transparent" />
 
         <View
-            android:layout_width="3dp"
-            android:layout_height="25dp"
+            android:layout_width="4dp"
+            android:layout_height="45dp"
             android:background="@android:color/holo_red_dark" />
     </LinearLayout>
 
