@@ -31,6 +31,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.cachemanager.CacheManager;
@@ -48,7 +50,11 @@ import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -81,6 +87,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private View confirm_cancel_buttons;
 
     private int obs_activity_request_code = 100;
+
+    private static final String locationFilename = "location";
+
+    private Gson gson = new Gson();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,12 +151,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onPause(){
         super.onPause();
         mapView.onPause();
+        // Save the state
+        saveState();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //TODO: Save the state
     }
 
     /**
@@ -209,9 +220,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         // Move the map to the starting position.
-        //TODO: start at current GPS position, "else" start at last position, "else" start at some default location
-        GeoPoint startPoint = new GeoPoint(63.419780, 10.401765);
-        moveMapTo(startPoint, 12.0);
+        moveMapToStartingPosition();
     }
 
     /**
@@ -592,6 +601,87 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.d(TAG, "resultCode: "+resultCode);
             }
         }
+    }
+
+    /**
+     * Save some stuff before the app closes completely
+     */
+    private void saveState(){
+        if (track.size() > 0) {
+            GeoPoint myPosition = track.get(track.size() - 1);
+            String content = gson.toJson(myPosition);
+
+            // Save the last known location
+            FileOutputStream fileOutputStream;
+            try {
+                fileOutputStream = openFileOutput(locationFilename, Context.MODE_PRIVATE);
+                fileOutputStream.write(content.getBytes());
+                fileOutputStream.close();
+                Log.d(TAG, "Successfully saved state to internal storage");
+            } catch (Exception e) {
+                Log.d(TAG, "Failed to save state. Message: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Move the map to the starting position.
+     * First try to get the current position, if this fails; try to get a position from the
+     * internal storage, if this fails; use a default location and zoom out such that all of
+     * Norway is shown.
+     */
+    private void moveMapToStartingPosition(){
+        GeoPoint startPoint = new GeoPoint(63.419780, 10.401765);
+        double zoom = 7.0;
+
+        // Try to find the current location (onLocationChanged updates this if GPS is available & the locationlistener is initialized before this method is called anyways)
+        if(track.size() > 0){
+            startPoint = track.get(track.size()-1);
+            zoom = 12.0;
+        }
+        else{
+            // Try to find the last known location from internal memory
+            try{
+                String fileContent = stringFromInternalFile(locationFilename);
+                // parse the GeoJSON into a GeoPoint object
+                GeoPoint locationFromFile = gson.fromJson(fileContent, GeoPoint.class);
+                if (locationFromFile != null){
+                    startPoint = locationFromFile;
+                    zoom = 12.0;
+                }
+            }
+            catch (Exception e){
+                Log.d(TAG, e.getMessage());
+                // Use the default location instead
+            }
+        }
+
+        // No saved location is found, so zoom out so that most of Norway is shown.
+        moveMapTo(startPoint, zoom);
+    }
+
+    /**
+     * Reads the specified filename from internal storage and returns the content as a String.
+     * @param filename filename
+     * @return The String found in the file
+     */
+    private String stringFromInternalFile(String filename){
+        String result;
+        try{
+            FileInputStream fileInputStream = openFileInput(filename);
+            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+            result = stringBuilder.toString();
+        }catch (Exception e){
+
+            result = "";
+        }
+        return result;
     }
 }
 
