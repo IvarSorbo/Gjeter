@@ -12,4 +12,5 @@ public class Constants {
 
     public static final int LONG_DISTANCE = 200;
 
+    public enum OBS_TYPE {DEFAULT_OBSERVATION, SHEEP_HERD, SHEEP_HERD_DETAILED, DEAD_SHEEP, PREDATOR, HUNTER, OTHER}
 }

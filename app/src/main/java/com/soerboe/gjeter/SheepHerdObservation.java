@@ -15,7 +15,7 @@ public class SheepHerdObservation extends Observation {
 
     public SheepHerdObservation(GeoPoint obsPosition, GeoPoint myPosition, Date time) {
         super(obsPosition, myPosition, time);
-        this.setObservationType("Saueflokk");//TODO: this should not be hardcoded
+        this.setObservationType(Constants.OBS_TYPE.SHEEP_HERD);
     }
 
     public SheepHerdObservation(SheepHerdObservation sheepHerdObservation){
@@ -24,12 +24,12 @@ public class SheepHerdObservation extends Observation {
         this.blackSheepCount = sheepHerdObservation.getBlackSheepCount();
         //this.brownSheepCount = sheepHerdObservation.brownSheepCount;
         this.otherSheepCount = sheepHerdObservation.getOtherSheepCount();
-        this.setObservationType("Saueflokk");
+        this.setObservationType(Constants.OBS_TYPE.SHEEP_HERD);
     }
 
     public SheepHerdObservation(Observation o){
         super(o);
-        this.setObservationType("Saueflokk");//TODO: this should not be hardcoded
+        this.setObservationType(Constants.OBS_TYPE.SHEEP_HERD);
     }
 
     // Setters and getters

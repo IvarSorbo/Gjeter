@@ -10,7 +10,7 @@ import java.util.Date;
  * This is the superclass in which all the specific observation classes inherit from
  */
 public class Observation {
-    private String observationType;
+    private Constants.OBS_TYPE observationType;
     private int totalCount;
     private GeoPoint obsPosition;
     private GeoPoint myPosition;
@@ -21,6 +21,7 @@ public class Observation {
         this.obsPosition = obsPosition;
         this.myPosition = myPosition;
         this.time = time;
+        this.observationType = Constants.OBS_TYPE.DEFAULT_OBSERVATION;
     }
 
     public Observation(final Observation o){
@@ -30,7 +31,7 @@ public class Observation {
     }
 
     // Getters and setters:
-    public void setObservationType(String observationType) {
+    public void setObservationType(Constants.OBS_TYPE observationType) {
         this.observationType = observationType;
     }
 
@@ -40,7 +41,7 @@ public class Observation {
 
     public Date getTime(){ return time; }
 
-    public String getObservationType() {
+    public Constants.OBS_TYPE getObservationType() {
         return observationType;
     }
 

@@ -14,7 +14,7 @@ public class SheepHerdDetailedObservation extends SheepHerdObservation {
 
     public SheepHerdDetailedObservation(GeoPoint obsPosition, GeoPoint myPosition, Date time) {
         super(obsPosition, myPosition, time);
-        //TODO: should the observationType be the same as for super?
+        setObservationType(Constants.OBS_TYPE.SHEEP_HERD_DETAILED);
     }
 
     public SheepHerdDetailedObservation(SheepHerdObservation sheepHerdObservation){
