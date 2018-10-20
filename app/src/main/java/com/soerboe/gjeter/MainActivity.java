@@ -55,7 +55,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -81,7 +80,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Location
     private LocationManager locationManager; //Accesses location services
     private LocationListener locationListener; //Listens for location changes
-    private ArrayList<Waypoint> track = new ArrayList<>(); //Stores the track
+
+    private Trip trip;
 
     private ImageButton newObservation;
     private View confirm_cancel_buttons;
@@ -102,6 +102,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // (Don't use findViewById before the content view is set)
         setContentView(R.layout.activity_main);
+
+        trip = new Trip();
 
         // Initialize the navigation bar
         NavBarSetup();
@@ -442,9 +444,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Waypoint waypoint = new Waypoint(
                         new GeoPoint(location.getLatitude(), location.getLongitude()),
                         new Date(System.currentTimeMillis()));
-                track.add(waypoint);
+                trip.addWaypoint(waypoint);
                 Log.d(TAG, "New waypoint: " + waypoint.toGeoJSONFeature());
-                // TODO: should the track(waypoints) also be written to a permanent file? (so that not all data is lost if the app is shut down for some reason)
 
                 // Update track on map
                 trackOverlay.addPoint(new GeoPoint(location));
@@ -539,12 +540,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         observationMarker.setTitle("TODO: 522");
         mapView.getOverlays().add(observationMarker);
 
-        GeoPoint myPosition;
+        GeoPoint myPosition = trip.getCurrentGeoPoint();
 
         // Draw a Polyline between the current position and the observed position
-        if (track.size() > 0){
-            myPosition = track.get(track.size()-1);
-
+        if (myPosition != null){
             Polyline line = new Polyline(mapView);
             line.addPoint(myPosition);
             line.addPoint(observation_point);
@@ -588,14 +587,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivityForResult(obs_activity, obs_activity_request_code);
     }
 
-    // TODO: fix the return value
-    // TODO: store the returned value somewhere
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == obs_activity_request_code){
             if (resultCode == 10) {
-                Log.d(TAG, "\nResult from the Observation Activity:\n" + data.getExtras().get("result").toString());
+                String result = data.getExtras().get("result").toString();
+                Log.d(TAG, "\nResult from the Observation Activity:\n" + result);
+                trip.addObservation(result);
             } else{
                 Log.d(TAG, "\nThe observation activity returned a bad resultCode");
                 Log.d(TAG, "resultCode: "+resultCode);
@@ -607,20 +606,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * Save some stuff before the app closes completely
      */
     private void saveState(){
-        if (track.size() > 0) {
-            GeoPoint myPosition = track.get(track.size() - 1);
+        // Save the last position
+        GeoPoint myPosition = trip.getCurrentGeoPoint();
+        if (myPosition != null) {
             String content = gson.toJson(myPosition);
 
-            // Save the last known location
-            FileOutputStream fileOutputStream;
-            try {
-                fileOutputStream = openFileOutput(locationFilename, Context.MODE_PRIVATE);
-                fileOutputStream.write(content.getBytes());
-                fileOutputStream.close();
-                Log.d(TAG, "Successfully saved state to internal storage");
-            } catch (Exception e) {
-                Log.d(TAG, "Failed to save state. Message: " + e.getMessage());
-            }
+            saveToInternalFile(content, locationFilename);
+        }
+        // Save the trip object
+        String filename = trip.getFilename();
+        trip.finish();
+        String tripJSON = gson.toJson(trip);
+        saveToInternalFile(tripJSON, filename);
+    }
+
+    private void saveToInternalFile(String content, String filename){
+        FileOutputStream fileOutputStream;
+        try {
+            fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+            fileOutputStream.write(content.getBytes());
+            fileOutputStream.close();
+            Log.d(TAG, "Successfully saved internal storage");
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to save. Message: " + e.getMessage());
         }
     }
 
@@ -635,8 +643,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         double zoom = 7.0;
 
         // Try to find the current location (onLocationChanged updates this if GPS is available & the locationlistener is initialized before this method is called anyways)
-        if(track.size() > 0){
-            startPoint = track.get(track.size()-1);
+        if(trip.getCurrentGeoPoint() != null){
+            startPoint = trip.getCurrentGeoPoint();
             zoom = 12.0;
         }
         else{

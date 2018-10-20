@@ -126,11 +126,11 @@ public class ObservationActivity extends AppCompatActivity implements AdapterVie
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy()");
         //TODO: could try to sendBackResult if !success
         if (!success){
             setResult(0, data);
         }
+        Log.d(TAG, "onDestroy()");
     }
 
     //OnItemSelectedListener methods:
