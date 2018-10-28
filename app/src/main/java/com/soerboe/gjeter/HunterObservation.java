@@ -6,6 +6,7 @@ public class HunterObservation extends Observation {
 
     public HunterObservation(Observation o) {
         super(o);
+        this.setObservationType(Constants.OBS_TYPE.HUNTER);
     }
 
     public int getHunterCount() {
