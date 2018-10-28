@@ -20,3 +20,5 @@ public class PredatorFragment extends MyFragment {
         return "Hello from PredatorFragment";
     }
 }
+
+// Also add the option to add tracks/excreta observations
