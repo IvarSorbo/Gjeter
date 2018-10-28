@@ -1,6 +1,7 @@
 package com.soerboe.gjeter;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -591,13 +592,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == obs_activity_request_code){
-            if (resultCode == 10) {
-                String result = data.getExtras().get("result").toString();
-                Log.d(TAG, "\nResult from the Observation Activity:\n" + result);
-                trip.addObservation(result);
-            } else{
-                Log.d(TAG, "\nThe observation activity returned a bad resultCode");
-                Log.d(TAG, "resultCode: "+resultCode);
+            switch (resultCode){
+                case Activity.RESULT_OK: {
+                    String result = data.getExtras().get("result").toString();
+                    Log.d(TAG, "\nResult from the Observation Activity:\n" + result);
+                    trip.addObservation(result);
+                    break;
+                }
+                case Activity.RESULT_CANCELED: {
+                    Log.d(TAG, "\nThe observation activity was canceled");
+
+                    break;
+                }
+                default:{
+                    Log.d(TAG, "\nThe observation activity failed");
+                }
             }
         }
     }

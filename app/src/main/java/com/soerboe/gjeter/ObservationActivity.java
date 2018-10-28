@@ -1,5 +1,6 @@
 package com.soerboe.gjeter;
 
+import android.app.Activity;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -114,23 +115,21 @@ public class ObservationActivity extends AppCompatActivity implements AdapterVie
     private void sendBackResult(){
         String result = fragment.toJSON();
 
-        // Return resultCode 10 if successful
         Log.d(TAG, "\nsendBackResult() is returning:\n" + result);
 
         data.putExtra("result", result);
-        setResult(10, data);
+        setResult(Activity.RESULT_OK, data);
         success = true;
         finish();
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //TODO: could try to sendBackResult if !success
+    protected void onPause() {
+        super.onPause();
         if (!success){
-            setResult(0, data);
+            sendBackResult();
+            Log.d(TAG, "onPause called the sendBackResult method");
         }
-        Log.d(TAG, "onDestroy()");
     }
 
     //OnItemSelectedListener methods:
