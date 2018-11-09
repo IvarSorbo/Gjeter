@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mapView.getOverlays().add(this.scaleBarOverlay);
 
         // Limit the zoom levels
-        mapView.setMaxZoomLevel(16.0); // (Kartverket level 17+ uses the black and white map).
+        mapView.setMaxZoomLevel(16.0); // (toporaster3 level 17+ uses the black and white map).
         mapView.setMinZoomLevel(6.0); // No point in being able to see more than Norway.
 
         // Setup the overlay that will display the track
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * Setup the connection to Kartverket's API
      */
     private void SetupKartverketZXY(){
-        String layer = "toporaster3";// evt "topo4"
+        String layer = "toporaster3";// evt "topo4" / "norgeskart_bakgrunn" (this works for higher zoom level)
 
         mapView.setTileSource(new OnlineTileSourceBase("Kartverket", 0, 20, 256 , "png",
                 new String[] { "http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers="+layer,
