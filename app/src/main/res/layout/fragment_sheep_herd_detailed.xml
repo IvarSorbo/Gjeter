@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:text="Antall søyer:"
+        android:text="@string/sheep_count"
         android:textSize="30dp"/>
 
     <android.support.design.widget.TextInputLayout
@@ -23,7 +23,7 @@
             android:id="@+id/whiteSheep_detSheepHerdFrag"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Hvit"
+            android:hint="@string/white"
             android:inputType="number"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
@@ -37,7 +37,7 @@
             android:id="@+id/blackSheep_detSheepHerdFrag"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Svart"
+            android:hint="@string/black"
             android:inputType="number"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
@@ -51,7 +51,7 @@
             android:id="@+id/otherSheep_detSheepHerdFrag"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Annen"
+            android:hint="@string/other"
             android:inputType="number"/>
     </android.support.design.widget.TextInputLayout>
 
@@ -61,8 +61,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/textInputLayer3"
-        android:text="Lam:"
-        android:textSize="30dp"/>
+        android:text="@string/lamb"
+        android:textSize="30sp"/>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/textInputLayer4"
@@ -75,7 +75,7 @@
             android:id="@+id/lamb_detSheepHerdFrag"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Antall"
+            android:hint="@string/count"
             android:inputType="number"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
@@ -89,7 +89,7 @@
             android:id="@+id/lamb_org_detSheepHerdFrag"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Originalt antall"
+            android:hint="@string/original_Count"
             android:inputType="number"/>
     </android.support.design.widget.TextInputLayout>
 
@@ -99,8 +99,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/textInputLayer5"
-        android:text="Eier:"
-        android:textSize="30dp"/>
+        android:text="@string/owner_colon"
+        android:textSize="30sp"/>
 
     <LinearLayout
         android:id="@+id/eartag_fragment_container"
@@ -112,7 +112,7 @@
         android:id="@+id/bt_add_eartag_fragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Legg til flere"
+        android:text="@string/add_more"
         android:layout_below="@id/eartag_fragment_container"
         android:layout_alignParentEnd="true"
         android:drawableStart="@drawable/ic_baseline_add_circle_24px"/>

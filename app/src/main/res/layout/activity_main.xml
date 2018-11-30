@@ -103,6 +103,7 @@
             android:background="@android:color/holo_red_dark" />
     </LinearLayout>
 
+    <!-- Buttons for confirm/cancel that appears when marking an observation -->
     <LinearLayout
         android:id="@+id/confirm_cancel_buttons"
         android:layout_width="match_parent"

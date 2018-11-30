@@ -3,12 +3,12 @@
     <item
         android:id="@+id/download_map"
         android:icon="@drawable/ic_baseline_save_alt_24px"
-        android:title="Last ned kart" />
+        android:title="@string/download_map" />
 
     <item android:id="@+id/menu_item2"
-        android:title="TODO"/>
+        android:title="@string/menu_item2"/>
 
     <item android:id="@+id/info_item"
         android:icon="@drawable/ic_baseline_info_24px"
-        android:title="TODO_Info"/>
+        android:title="@string/menu_item3"/>
 </menu>

@@ -7,8 +7,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:text="Annen observasjon:"
-        android:textSize="40dp"/>
+        android:text="@string/other_observation"
+        android:textSize="40sp"/>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/textInputLayer1"
@@ -21,7 +21,7 @@
             android:id="@+id/type_otherFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Type"
+            android:hint="@string/type"
             android:inputType="text"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
@@ -35,7 +35,7 @@
             android:id="@+id/count_otherFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Antall"
+            android:hint="@string/count"
             android:inputType="number"/>
     </android.support.design.widget.TextInputLayout>
 

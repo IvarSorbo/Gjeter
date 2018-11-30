@@ -7,8 +7,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:text="Antall dyr:"
-        android:textSize="40dp"/>
+        android:text="@string/animal_count"
+        android:textSize="40sp"/>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/textInputLayer1"
@@ -21,7 +21,7 @@
             android:id="@+id/whiteSheep_sheepHerdFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Hvit"
+            android:hint="@string/white"
             android:inputType="number"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
@@ -35,7 +35,7 @@
             android:id="@+id/blackSheep_sheepHerdFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Svart"
+            android:hint="@string/black"
             android:inputType="number"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
@@ -49,7 +49,7 @@
             android:id="@+id/otherSheep_sheepHerdFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Annen"
+            android:hint="@string/other"
             android:inputType="number"/>
 
     </android.support.design.widget.TextInputLayout>
@@ -60,5 +60,5 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/textInputLayer3"
-        android:text="Detaljert beskrivelse..." />
+        android:text="@string/detailed_description" />
 </RelativeLayout>

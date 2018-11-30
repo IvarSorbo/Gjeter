@@ -7,13 +7,12 @@
         android:id="@+id/textInputLayer6"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_weight="1">
         <android.support.design.widget.TextInputEditText
             android:id="@+id/eartag_color"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Øremerkefarge"
+            android:hint="@string/eartagcolor"
             android:inputType="text"/>
     </android.support.design.widget.TextInputLayout>
 
@@ -21,13 +20,12 @@
         android:id="@+id/textInputLayer7"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_weight="1">
         <android.support.design.widget.TextInputEditText
             android:id="@+id/eartag_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Antall"
+            android:hint="@string/count"
             android:inputType="number"/>
     </android.support.design.widget.TextInputLayout>
 

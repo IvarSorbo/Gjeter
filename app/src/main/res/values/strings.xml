@@ -11,4 +11,30 @@
     <string name="confirm">Bekreft</string>
 
     <string name="bt_new_observation_description">New observation</string>
+    <string name="download_map">Last ned kart</string>
+    <string name="menu_item2">TODO</string>
+    <string name="menu_item3">TODO_Info</string>
+    <string name="save">Lagre</string>
+    <string name="count">Antall</string>
+    <string name="other">Annen</string>
+    <string name="black">Svart</string>
+    <string name="white">Hvit</string>
+    <string name="detailed_description">Detaljert beskrivelse…</string>
+    <string name="eartagcolor">Øremerkefarge</string>
+    <string name="notes">Notater:</string>
+    <string name="take_picture">Ta bilde</string>
+    <string name="owner">Eier</string>
+    <string name="eartag">Øremerke:</string>
+    <string name="number">Nummer</string>
+    <string name="type">Type</string>
+    <string name="other_observation">Annen observasjon:</string>
+    <string name="hunter_count">Antall jegere</string>
+    <string name="dog_count">Antall hunder</string>
+    <string name="predator">Rovdyr:</string>
+    <string name="animal_count">Antall dyr:</string>
+    <string name="sheep_count">Antall søyer:</string>
+    <string name="lamb">Lam:</string>
+    <string name="original_Count">Originalt antall</string>
+    <string name="add_more">Legg til flere</string>
+    <string name="owner_colon">Eier:</string>
 </resources>
