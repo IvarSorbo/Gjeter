@@ -18,21 +18,4 @@ public class Waypoint extends GeoPoint{
     public Date getTime(){
         return time;
     }
-
-    public String toGeoJSONPoint(){
-        /* Example:
-        {"type": "Point", "coordinates": [10.401765, 63.419780]}*/
-        return "{\"type\":\"Point\", \"coordinates\":[" + super.getLongitude() + "," + super.getLatitude() + "]}";
-    }
-
-    public String toGeoJSONFeature(){
-        /* Example:
-        { "type": "Feature",
-        "geometry": {"type": "Point", "coordinates": [10.401765, 63.419780]},
-        "properties": {"time": 1538164297}
-        }*/
-        return "{\"type\":\"Feature\", \"geometry\":" + this.toGeoJSONPoint()
-                + ",\"properties\":{\"time\":" + time.getTime() + "}}";
-    }
-
 }

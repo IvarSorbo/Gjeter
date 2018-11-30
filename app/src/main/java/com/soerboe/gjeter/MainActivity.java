@@ -446,7 +446,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         new GeoPoint(location.getLatitude(), location.getLongitude()),
                         new Date(System.currentTimeMillis()));
                 trip.addWaypoint(waypoint);
-                Log.d(TAG, "New waypoint: " + waypoint.toGeoJSONFeature());
+                Log.d(TAG, "New waypoint: " + gson.toJson(waypoint));
 
                 // Update track on map
                 trackOverlay.addPoint(new GeoPoint(location));

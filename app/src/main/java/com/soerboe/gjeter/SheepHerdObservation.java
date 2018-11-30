@@ -1,7 +1,5 @@
 package com.soerboe.gjeter;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.osmdroid.util.GeoPoint;
 
 import java.util.Date;

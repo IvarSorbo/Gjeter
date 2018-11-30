@@ -1,7 +1,5 @@
 package com.soerboe.gjeter;
 
-import com.google.gson.Gson;
-
 import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
