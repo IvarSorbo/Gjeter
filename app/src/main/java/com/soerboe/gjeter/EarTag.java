@@ -1,10 +1,5 @@
 package com.soerboe.gjeter;
 
-import android.support.annotation.NonNull;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 public class EarTag {
     private String color;
     private int count;
@@ -33,23 +28,6 @@ public class EarTag {
 
     public void setCount(int count) {
         this.count = count;
-    }
-
-    @NonNull
-    @Override
-    public String toString(){
-        return this.toJSON();
-    }
-
-    public String toJSON() {
-        JSONObject json = new JSONObject();
-        try {
-            json.put("color", this.color);
-            json.put("count", this.count);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return json.toString();
     }
 }
 

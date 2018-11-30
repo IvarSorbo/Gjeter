@@ -8,9 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.Gson;
+
 public class EarTagFragment extends MyFragment {
     private EarTag earTag;
     private TextInputEditText color, count;
+    private Gson gson = new Gson();
+
 
     @Nullable
     @Override
@@ -37,6 +41,6 @@ public class EarTagFragment extends MyFragment {
     @Override
     public String toJSON() {
         update();
-        return earTag.toJSON();
+        return gson.toJson(earTag);
     }
 }

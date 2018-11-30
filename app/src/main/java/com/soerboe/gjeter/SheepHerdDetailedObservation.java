@@ -60,10 +60,4 @@ public class SheepHerdDetailedObservation extends SheepHerdObservation {
             }
         }
     }
-
-    @Override
-    public String toJSON() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
-    }
 }

@@ -11,12 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.gson.Gson;
+
 public class SheepHerdFragment extends MyFragment {
     private TextInputEditText whiteCount, blackCount, otherCount;
 
     private Activity activity;
 
     private SheepHerdObservation sheepHerdObservation;
+
+    private Gson gson = new Gson();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,7 +80,7 @@ public class SheepHerdFragment extends MyFragment {
     @Override
     public String toJSON() {
         update();
-        return sheepHerdObservation.toJSON();
+        return gson.toJson(sheepHerdObservation);
     }
 
     /**

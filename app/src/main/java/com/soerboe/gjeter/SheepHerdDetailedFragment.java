@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 
 public class SheepHerdDetailedFragment extends MyFragment{
@@ -21,6 +23,9 @@ public class SheepHerdDetailedFragment extends MyFragment{
     private ArrayList<EarTagFragment> earTagFragments;
     private Activity activity;
     private TextInputEditText whiteSheep, blackSheep, otherSheep, lamb, lambOrg;
+
+    private Gson gson = new Gson();
+
 
     @Nullable
     @Override
@@ -123,6 +128,6 @@ public class SheepHerdDetailedFragment extends MyFragment{
     @Override
     public String toJSON() {
         update();
-        return observation.toJSON();
+        return gson.toJson(observation);
     }
 }

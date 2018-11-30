@@ -1,7 +1,5 @@
 package com.soerboe.gjeter;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.osmdroid.util.GeoPoint;
 
 import java.util.Date;
@@ -63,19 +61,4 @@ public class Observation {
     public double getDistance(){
         return obsPosition.distanceToAsDouble(myPosition);
     }
-
-    public String toJSON(){
-        JSONObject json = new JSONObject();
-        try {
-            json.put("obsPosition", this.obsPosition);
-            json.put("myPosition", this.myPosition);
-            json.put("totalCount", this.totalCount);
-            json.put("time", this.time.getTime());
-            json.put("observationType", this.observationType);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return json.toString();
-    }
 }
-

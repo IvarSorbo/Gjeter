@@ -499,7 +499,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View v) {
                 cleanupObservationDialog();
                 // Mark the selected spot as an observation
-                markObservation();
+                //markObservation();
+                startObservationActivity();//TODO:##########################################################
             }
         });
         bt_cancel.setOnClickListener(new View.OnClickListener() {
@@ -526,38 +527,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * Marks the confirmed observation on the map and asks the user to fill in more info
      * about the observation.
      */
-    private void markObservation(){
-        // Find the coordinates of the middle of the screen
-        Waypoint observation_point = new Waypoint(
-                new GeoPoint(mapView.getMapCenter().getLatitude(), mapView.getMapCenter().getLongitude()),
-                new Date(System.currentTimeMillis())
-        );
+    private void markObservation(String observation_json){
+        // Get user's position and observation's position:
+        Observation obs = gson.fromJson(observation_json, Observation.class);
+        GeoPoint my_pos = obs.getMyPosition();
+        GeoPoint obs_pos = obs.getObsPosition();
 
         // Make a marker on the map
         Marker observationMarker = new Marker(mapView);
-        observationMarker.setPosition(observation_point);
+        observationMarker.setPosition(obs_pos);
         observationMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         observationMarker.setIcon(getResources().getDrawable(R.drawable.ic_baseline_place_24px));
         observationMarker.setTitle("TODO: 522");
+        //observationMarker.onLongPress(???????????, mapView);
         mapView.getOverlays().add(observationMarker);
 
-        GeoPoint myPosition = trip.getCurrentGeoPoint();
-
         // Draw a Polyline between the current position and the observed position
-        if (myPosition != null){
+        if(my_pos.getLatitude() != 0 && my_pos.getLongitude() != 0){
             Polyline line = new Polyline(mapView);
-            line.addPoint(myPosition);
-            line.addPoint(observation_point);
+            line.addPoint(my_pos);
+            line.addPoint(obs_pos);
             line.setColor(0xFF000000);//AlphaRGB
             line.setWidth(7f);//width in pixels
             mapView.getOverlays().add(line);
             mapView.invalidate();
-        }else {
-            // TODO: warn the user?
-            myPosition = new GeoPoint(0.0,0.0);
         }
-
-        startObservationActivity(observation_point, myPosition);
     }
 
     private void showCrosshair(boolean show){
@@ -575,10 +569,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * Put observed position and my position onto an ObservationActivity and start the activity.
-     * @param obs_pos Marked position of the observation
-     * @param my_pos Position of the user
      */
-    private void startObservationActivity(GeoPoint obs_pos, GeoPoint my_pos){
+    private void startObservationActivity(){
+        // Find the user's position
+        GeoPoint my_pos = trip.getCurrentGeoPoint();
+        if(my_pos == null){
+            my_pos = new GeoPoint(0.0, 0.0);
+            //TODO: Warn the user?
+        }
+
+        // Find the observation's position
+        GeoPoint obs_pos = new GeoPoint(mapView.getMapCenter().getLatitude(), mapView.getMapCenter().getLongitude());
+
         Intent obs_activity = new Intent(this, ObservationActivity.class);
         obs_activity.putExtra(Constants.OBS_LAT, obs_pos.getLatitude());
         obs_activity.putExtra(Constants.OBS_LNG, obs_pos.getLongitude());
@@ -596,6 +598,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 case Activity.RESULT_OK: {
                     String result = data.getExtras().get("result").toString();
                     Log.d(TAG, "\nResult from the Observation Activity:\n" + result);
+                    markObservation(result);
                     trip.addObservation(result);
                     break;
                 }

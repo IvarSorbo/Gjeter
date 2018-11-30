@@ -72,24 +72,4 @@ public class SheepHerdObservation extends Observation {
     public int getOtherSheepCount() {
         return otherSheepCount;
     }
-
-    // Return a JSON representation of the object
-    public String toJSON(){
-        JSONObject json = new JSONObject();
-        try {
-            json.put("obsPosition", this.getObsPosition());
-            json.put("myPosition", this.getMyPosition());
-            json.put("totalCount", this.getTotalCount());
-            json.put("time", this.getTime().getTime());
-            json.put("observationType", this.getObservationType());
-            json.put("whiteSheepCount",this.whiteSheepCount);
-            json.put("blackSheepCount",this.blackSheepCount);
-            //json.put("brownSheepCount",this.brownSheepCount);
-            json.put("otherSheepCount",this.otherSheepCount);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return json.toString();
-    }
 }
