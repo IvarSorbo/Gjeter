@@ -17,10 +17,13 @@ public class SheepHerdDetailedObservation extends SheepHerdObservation {
 
     public SheepHerdDetailedObservation(SheepHerdObservation sheepHerdObservation){
         super(sheepHerdObservation);
+        setObservationType(Constants.OBS_TYPE.SHEEP_HERD_DETAILED);
+
     }
 
     public SheepHerdDetailedObservation(Observation o) {
         super(o);
+        setObservationType(Constants.OBS_TYPE.SHEEP_HERD_DETAILED);
     }
 
     public int getLambCount() {

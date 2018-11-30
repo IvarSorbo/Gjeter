@@ -48,6 +48,7 @@ import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
+import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
@@ -498,9 +499,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View v) {
                 cleanupObservationDialog();
-                // Mark the selected spot as an observation
-                //markObservation();
-                startObservationActivity();//TODO:##########################################################
+                startObservationActivity();
             }
         });
         bt_cancel.setOnClickListener(new View.OnClickListener() {
@@ -538,8 +537,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         observationMarker.setPosition(obs_pos);
         observationMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         observationMarker.setIcon(getResources().getDrawable(R.drawable.ic_baseline_place_24px));
-        observationMarker.setTitle("TODO: 522");
-        //observationMarker.onLongPress(???????????, mapView);
+        observationMarker.setTitle(obs.getObservationType().toString());
         mapView.getOverlays().add(observationMarker);
 
         // Draw a Polyline between the current position and the observed position

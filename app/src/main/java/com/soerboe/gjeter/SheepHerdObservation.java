@@ -30,19 +30,12 @@ public class SheepHerdObservation extends Observation {
         this.setObservationType(Constants.OBS_TYPE.SHEEP_HERD);
     }
 
-    // Setters and getters
-    private void updateCount(){
-        this.setTotalCount(whiteSheepCount + blackSheepCount /*+ brownSheepCount*/ + otherSheepCount);
-    }
-
     public void setWhiteSheepCount(int whiteSheepCount) {
         this.whiteSheepCount = whiteSheepCount;
-        updateCount();
     }
 
     public void setBlackSheepCount(int blackSheepCount) {
         this.blackSheepCount = blackSheepCount;
-        updateCount();
     }
     /*
     public void setBrownSheepCount(int brownSheepCount) {
@@ -52,7 +45,6 @@ public class SheepHerdObservation extends Observation {
 
     public void setOtherSheepCount(int otherSheepCount) {
         this.otherSheepCount = otherSheepCount;
-        updateCount();
     }
 
     public int getWhiteSheepCount() {

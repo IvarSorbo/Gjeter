@@ -9,7 +9,6 @@ import java.util.Date;
  */
 public class Observation {
     private Constants.OBS_TYPE observationType;
-    private int totalCount;
     private GeoPoint obsPosition;
     private GeoPoint myPosition;
     private Date time;
@@ -33,18 +32,10 @@ public class Observation {
         this.observationType = observationType;
     }
 
-    public void setTotalCount(int totalCount) {
-        this.totalCount = totalCount;
-    }
-
     public Date getTime(){ return time; }
 
     public Constants.OBS_TYPE getObservationType() {
         return observationType;
-    }
-
-    public int getTotalCount() {
-        return totalCount;
     }
 
     public GeoPoint getObsPosition() {
