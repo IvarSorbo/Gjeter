@@ -3,8 +3,10 @@ package com.soerboe.gjeter;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Stores all the information gathered from a trip that is to be stored to permanent memory
+ */
 public class Trip {
-    //private int tripId;
     private ArrayList<Waypoint> track;
     private ArrayList<String> observations; // I could store them as (id, String) for easier update/delete
     private Date startTime;
@@ -30,8 +32,6 @@ public class Trip {
         }
         return null;
     }
-
-    //TODO: do this class need to do anything with the polyline?
 
     public void addObservation(String JSONrepresentation){
         observations.add(JSONrepresentation);

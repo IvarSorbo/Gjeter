@@ -66,9 +66,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // Map
     private MapView mapView;
-    private MyLocationNewOverlay myLocationNewOverlay;
-    private CompassOverlay compassOverlay;
-    private ScaleBarOverlay scaleBarOverlay;
     private Polyline trackOverlay;
 
     // Offline caching
@@ -79,10 +76,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Tag used in debug messages
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    // Location
-    private LocationManager locationManager; //Accesses location services
-    private LocationListener locationListener; //Listens for location changes
-
+    // Stores a waypointlist and a list of observations for the current trip
     private Trip trip;
 
     private ImageButton newObservation;
@@ -102,23 +96,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Context ctx = getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
 
-        // (Don't use findViewById before the content view is set)
         setContentView(R.layout.activity_main);
 
         trip = new Trip();
 
-        // Initialize the navigation bar
         NavBarSetup();
 
-        // Setup location listener
         SetupLocationListener();
 
         mapView = findViewById(R.id.map);
         newObservation = findViewById(R.id.new_observation);
         confirm_cancel_buttons = findViewById(R.id.confirm_cancel_buttons);
 
-        //TODO Handle permissions (location access is only needed if GPS is used. Write access is needed for all use of the app)
-
+        // Checking and requesting permissions:
         String[] reqPermissions = new String[] {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -127,21 +117,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int requestCode = 2;
 
         // For API level 23+ request permission at runtime
-        if (ContextCompat.checkSelfPermission(MainActivity.this,
-                reqPermissions[0]) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(MainActivity.this,
-                reqPermissions[1]) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(MainActivity.this,
-                reqPermissions[2]) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(MainActivity.this,
-                reqPermissions[3]) == PackageManager.PERMISSION_GRANTED
-                ) {
+        if (permissionsGranted(reqPermissions)) {
             // Setup the connection to Kartverket's API.
             SetupMap();
         } else {
             // Request permission
             ActivityCompat.requestPermissions(MainActivity.this, reqPermissions, requestCode);
-            // The response to this is handled by onRequestPermissionsResult
         }
     }
 
@@ -159,15 +140,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         saveState();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
     /**
-     * Center the map
+     * Center the map to a specified point and zoom level
      */
-
     private void moveMapTo(GeoPoint point, Double zoom){
         IMapController mapController = mapView.getController();
         mapController.setZoom(zoom);
@@ -186,22 +161,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mapView.setMultiTouchControls(true);
 
         // Add a MyLocation overlay
-        this.myLocationNewOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this),mapView);
-        this.myLocationNewOverlay.enableMyLocation();
-        mapView.getOverlays().add(this.myLocationNewOverlay);//TODO: different marker?
+        MyLocationNewOverlay myLocationNewOverlay;
+        myLocationNewOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this),mapView);
+        myLocationNewOverlay.enableMyLocation();
+        mapView.getOverlays().add(myLocationNewOverlay);
 
         // Add a compass overlay
-        this.compassOverlay = new CompassOverlay(this, new InternalCompassOrientationProvider(this), mapView);
-        this.compassOverlay.enableCompass();
-        mapView.getOverlays().add(this.compassOverlay);
+        CompassOverlay compassOverlay;
+        compassOverlay = new CompassOverlay(this, new InternalCompassOrientationProvider(this), mapView);
+        compassOverlay.enableCompass();
+        mapView.getOverlays().add(compassOverlay);
 
         // Add map scale bar
+        ScaleBarOverlay scaleBarOverlay;
         final DisplayMetrics dm = this.getResources().getDisplayMetrics();
         scaleBarOverlay = new ScaleBarOverlay(mapView);
         scaleBarOverlay.setCentred(true);
         // These values changes the location on the screen
         scaleBarOverlay.setScaleBarOffset(dm.widthPixels / 2, 10);
-        mapView.getOverlays().add(this.scaleBarOverlay);
+        mapView.getOverlays().add(scaleBarOverlay);
 
         // Limit the zoom levels
         mapView.setMaxZoomLevel(16.0); // (toporaster3 level 17+ uses the black and white map).
@@ -252,20 +230,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * Handle the permissions request response.
-     * TODO: make the permission process prettier
      */
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if(checkGrantResults(grantResults)){
             SetupMap();
         } else {
-            //TODO: make this report more useful
-            // report to user that permission was denied
             Toast.makeText(MainActivity.this,
-                    "One or more permissions were denied",//getResources().getString(R.string.something),
+                    "Permissions were denied, some features may not work as intended",
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     * Check if all the required permissions are granted
+     */
+    private boolean permissionsGranted(@NonNull String[] reqPermissions){
+        for (String permission : reqPermissions) {
+            if (ContextCompat.checkSelfPermission(MainActivity.this,
+                    permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+    private boolean checkGrantResults(@NonNull int[] grantResults){
+        for (int result : grantResults) {
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -425,6 +421,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      */
     private void SetupLocationListener(){
         //TODO: what happens if user does not grant permission initially, but wants to do it later?
+
+        LocationManager locationManager; //Accesses location services
+        LocationListener locationListener; //Listens for location changes
 
         // Check for permissions
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
