@@ -5,7 +5,8 @@ import org.osmdroid.util.GeoPoint;
 import java.util.Date;
 
 /**
- * This is the superclass in which all the specific observation classes inherit from
+ * Represents an observation.
+ * This is the superclass which all the specific observation classes inherit from.
  */
 public class Observation {
     private Constants.OBS_TYPE observationType;

@@ -18,6 +18,9 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+/**
+ * A fragment for filling in detailed information about a sheep herd.
+ */
 public class SheepHerdDetailedFragment extends MyFragment{
     private SheepHerdDetailedObservation observation;
     private ArrayList<EarTagFragment> earTagFragments;
@@ -25,7 +28,6 @@ public class SheepHerdDetailedFragment extends MyFragment{
     private TextInputEditText whiteSheep, blackSheep, otherSheep, lamb, lambOrg, notes;
 
     private Gson gson = new Gson();
-
 
     @Nullable
     @Override
@@ -87,23 +89,22 @@ public class SheepHerdDetailedFragment extends MyFragment{
         this.activity = getActivity();
     }
 
+    /**
+     * Add another EarTagFragment to the container
+     */
     private void addEarTagFragment(){
-        // Add another EarTagFragment to the container
         EarTagFragment newFragment = new EarTagFragment();
         earTagFragments.add(newFragment);
-
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-
         transaction.add(R.id.eartag_fragment_container, newFragment);
-
         transaction.commit();
     }
 
     /**
+     * Check if the observation object contains any useful info.
      * This should be called after the Observation object has been fetched from the parent activity.
      */
     private void fillInExisitingInfo(){
-        // Check if the observation object contains any useful info
         if(observation.getWhiteSheepCount() > 0) {whiteSheep.setText(String.valueOf(observation.getWhiteSheepCount()));}
         if(observation.getBlackSheepCount() > 0) {blackSheep.setText(String.valueOf(observation.getBlackSheepCount()));}
         if(observation.getOtherSheepCount() > 0) {otherSheep.setText(String.valueOf(observation.getOtherSheepCount()));}

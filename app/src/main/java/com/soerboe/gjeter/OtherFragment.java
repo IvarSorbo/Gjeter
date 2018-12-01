@@ -14,13 +14,15 @@ import com.google.gson.Gson;
 
 import java.io.InputStreamReader;
 
+/**
+ * A fragment for filling information about an observation that does not fit any of the other types.
+ */
 public class OtherFragment extends MyFragment {
 
     private TextInputEditText type, count, notes;
     private Activity activity;
     private OtherObservation otherObservation;
     private Gson gson = new Gson();
-
 
     @Nullable
     @Override

@@ -1,5 +1,8 @@
 package com.soerboe.gjeter;
 
+/**
+ * Represents an observation of hunter(s).
+ */
 public class HunterObservation extends Observation {
     private int hunterCount;
     private int dogCount;

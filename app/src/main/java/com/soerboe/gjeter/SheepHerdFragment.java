@@ -13,6 +13,9 @@ import android.widget.Button;
 
 import com.google.gson.Gson;
 
+/**
+ * A fragment for filling in information about a sheep herd observation.
+ */
 public class SheepHerdFragment extends MyFragment {
     private TextInputEditText whiteCount, blackCount, otherCount, notes;
 
@@ -45,7 +48,7 @@ public class SheepHerdFragment extends MyFragment {
                     update();
                     ((MoreDetailsListener) activity).onMoreDetailsClicked(sheepHerdObservation);
                 }catch (ClassCastException cce){
-                    //TODO: DoSomething
+                    cce.printStackTrace();
                 }
             }
         });
@@ -86,7 +89,8 @@ public class SheepHerdFragment extends MyFragment {
     }
 
     /**
-     * An interface which the parent activity should implement in order
+     * An interface which the parent activity should implement in order to switch to the
+     * more detailed sheep herd fragment when the button is clicked.
      */
     public interface MoreDetailsListener{
         void onMoreDetailsClicked(SheepHerdObservation sheepHerdObs);// When "more details" is clicked -> switch to detailed fragment

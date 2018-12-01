@@ -93,6 +93,7 @@
             android:inputType="number"/>
     </android.support.design.widget.TextInputLayout>
 
+    <!-- Other notes -->
     <TextView
         android:id="@+id/textView_notes"
         android:layout_width="wrap_content"
@@ -123,7 +124,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/textInputLayer6"
-        android:text="@string/owner_colon"
+        android:text="@string/owner_title"
         android:textSize="30sp"/>
 
     <LinearLayout

@@ -5,7 +5,7 @@ import org.osmdroid.util.GeoPoint;
 import java.util.Date;
 
 /**
- * A GeoPoint and a timestamp
+ * A GeoPoint that also stores a timestamp
  */
 public class Waypoint extends GeoPoint{
     private Date time;

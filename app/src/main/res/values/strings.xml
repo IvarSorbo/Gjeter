@@ -8,12 +8,16 @@
     <string name="show_cache_info">Info om kart-cache</string>
     <string name="cache_download">Last ned</string>
     <string name="cancel">Avbryt</string>
+    <string name="canceled">Avbrutt</string>
     <string name="confirm">Bekreft</string>
+    <string name="done">Ferdig</string>
+
+    <string name="permissions_denied">Tilganger mangler, noen funksjoner vil ikke fungere</string>
 
     <string name="bt_new_observation_description">Ny observasjon</string>
     <string name="download_map">Last ned kart</string>
     <string name="menu_item2">TODO</string>
-    <string name="menu_item3">Kart-cache info</string>
+    <string name="map_cache_info">Kart-cache info</string>
     <string name="save">Lagre</string>
     <string name="count">Antall</string>
     <string name="other">Annen</string>
@@ -36,6 +40,6 @@
     <string name="lamb">Lam:</string>
     <string name="original_Count">Originalt antall</string>
     <string name="add_more">Legg til flere</string>
-    <string name="owner_colon">Eier:</string>
+    <string name="owner_title">Eier:</string>
     <string name="hunter">Jeger</string>
 </resources>

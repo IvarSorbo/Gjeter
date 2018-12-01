@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 
 import com.google.gson.Gson;
 
+/**
+ * A fragment for filling information about a hunter observation.
+ */
 public class HunterFragment extends MyFragment {
 
     private TextInputEditText hunterCount, dogCount, notes;

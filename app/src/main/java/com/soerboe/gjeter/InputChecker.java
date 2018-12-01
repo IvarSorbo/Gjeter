@@ -38,15 +38,4 @@ public final class InputChecker {
             return "";
         }
     }
-
-
-    public static Constants.OBS_TYPE getObsTypeFromJson(String json_string){
-        Gson gson = new Gson();
-        try {
-            Observation obs = gson.fromJson(json_string, Observation.class);
-            return obs.getObservationType();
-        }catch(Exception e){
-            return null;
-        }
-    }
 }

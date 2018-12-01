@@ -4,6 +4,9 @@ import org.osmdroid.util.GeoPoint;
 
 import java.util.Date;
 
+/**
+ * A Sheep herd observation.
+ */
 public class SheepHerdObservation extends Observation {
     // A count for each of the different colored sheep
     private int whiteSheepCount;

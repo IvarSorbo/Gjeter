@@ -1,6 +1,8 @@
 package com.soerboe.gjeter;
 
-
+/**
+ * Represents an observation of type "other".
+ */
 public class OtherObservation extends Observation {
     private String type;
     private int count;

@@ -1,5 +1,8 @@
 package com.soerboe.gjeter;
 
+/**
+ * Represents a sheep's ear tag.
+ */
 public class EarTag {
     private String color;
     private int count;

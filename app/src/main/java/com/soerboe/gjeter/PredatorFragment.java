@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 
 import com.google.gson.Gson;
 
+/**
+ * A fragment for filling in information about a predator observation.
+ */
 public class PredatorFragment extends MyFragment {
     private TextInputEditText type, count, notes;
     private Activity activity;
@@ -53,5 +56,3 @@ public class PredatorFragment extends MyFragment {
         return gson.toJson(predatorObservation);
     }
 }
-
-// Also add the option to add tracks/excreta observations

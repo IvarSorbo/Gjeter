@@ -48,7 +48,6 @@ import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
-import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
@@ -79,7 +78,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Stores a waypointlist and a list of observations for the current trip
     private Trip trip;
 
+    // The "+" button
     private ImageButton newObservation;
+
+
     private View confirm_cancel_buttons;
 
     private int obs_activity_request_code = 100;
@@ -158,11 +160,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Connection to Kartverket's API.
         SetupKartverketZXY();
 
-        // Add default zoom buttons and ability to zoom with 2 fingers.
-        mapView.setBuiltInZoomControls(false);
+        // Add the ability to zoom with 2 fingers.
         mapView.setMultiTouchControls(true);
 
-        // Add a MyLocation overlay
+        // Add a MyLocation overlay (shows the user's position on the map)
         MyLocationNewOverlay myLocationNewOverlay;
         myLocationNewOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this),mapView);
         myLocationNewOverlay.enableMyLocation();
@@ -179,8 +180,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         final DisplayMetrics dm = this.getResources().getDisplayMetrics();
         scaleBarOverlay = new ScaleBarOverlay(mapView);
         scaleBarOverlay.setCentred(true);
-        // These values changes the location on the screen
-        scaleBarOverlay.setScaleBarOffset(dm.widthPixels / 2, 10);
+        scaleBarOverlay.setScaleBarOffset(dm.widthPixels / 2, 10);// These values changes the location on the screen
         mapView.getOverlays().add(scaleBarOverlay);
 
         // Limit the zoom levels
@@ -201,7 +201,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startObservationDialog();
             }
         });
-
 
         // Move the map to the starting position.
         moveMapToStartingPosition();
@@ -240,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             SetupMap();
         } else {
             Toast.makeText(MainActivity.this,
-                    "Permissions were denied, some features may not work as intended",
+                    R.string.permissions_denied,
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -313,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     /**
-     * Show dialog where user can choose to cache the current area or to cancel.
+     * Show dialog where user can choose to download the current area.
      */
     private void showDownloadDialog(){
         // Build the dialog.
@@ -337,7 +336,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
         );
 
-        // Create and show it
+        // Create and show the dialog
         alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
@@ -379,7 +378,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     /**
-     * Start downloading the tiles while showing a progression bar
+     * Start downloading the tiles while showing a progression bar.
      */
     private void downloadJobAlert() {
         try {
@@ -401,7 +400,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             cacheManager.downloadAreaAsync(this, bb, zoom_min, zoom_max, new CacheManager.CacheManagerCallback() {
                 @Override
                 public void onTaskComplete() {
-                    Toast.makeText(MainActivity.this, "Ferdig", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, R.string.done, Toast.LENGTH_LONG).show();
                     if (sqliteArchiveTileWriter!=null)
                         sqliteArchiveTileWriter.onDetach();
                 }
@@ -419,14 +418,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
 
                 @Override
-                public void downloadStarted() {
-                    //NOOP
-                }
+                public void downloadStarted() { }
 
                 @Override
-                public void setPossibleTilesInArea(int total) {
-                    //NOOP
-                }
+                public void setPossibleTilesInArea(int total) { }
             });
 
         }catch (Exception ex){
@@ -471,14 +466,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
 
             @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
+            public void onStatusChanged(String provider, int status, Bundle extras) { }
 
             @Override
-            public void onProviderEnabled(String provider) {
-
-            }
+            public void onProviderEnabled(String provider) { }
 
             @Override
             public void onProviderDisabled(String provider) {
@@ -495,9 +486,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 locationListener);
     }
 
+    /**
+     * Starts the process of adding an observation.
+     * This is called when the "+" button is clicked.
+     */
     private void startObservationDialog(){
-        // This is called when the "+" button is clicked
-
         // Show a crosshair in the middle of the screen
         showCrosshair(true);
 
@@ -539,8 +532,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     /**
-     * Marks the confirmed observation on the map and asks the user to fill in more info
-     * about the observation.
+     * Marks the observation on the map and draws a line between the current position and the
+     * observed position.
      */
     private void markObservation(String observation_json){
         // Get user's position and observation's position:
@@ -568,6 +561,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    /**
+     * Turn on/off the visibility of the crosshair in the middle of the map.
+     */
     private void showCrosshair(boolean show){
         View horizontal = findViewById(R.id.crosshair_horizontal);
         View vertical = findViewById(R.id.crosshair_vertical);
@@ -670,7 +666,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         GeoPoint startPoint = new GeoPoint(63.419780, 10.401765);
         double zoom = 7.0;
 
-        // Try to find the current location (onLocationChanged updates this if GPS is available & the locationlistener is initialized before this method is called anyways)
+        // Try to find the current location
         if(trip.getCurrentGeoPoint() != null){
             startPoint = trip.getCurrentGeoPoint();
             zoom = 12.0;
@@ -688,7 +684,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             catch (Exception e){
                 Log.d(TAG, e.getMessage());
-                // Use the default location instead
             }
         }
 
@@ -720,13 +715,3 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return result;
     }
 }
-
-/*
-* NOTE;
-* see: https://stackoverflow.com/questions/14060389/osmdroid-displays-an-empty-grid
-* for a possible solution for why Kartverket doesn't work in the emulator.
-* I have to either get some external storage for the emulator or I have to change
-* where OSMdroid stores the cached files (see bottom answer).
-* OpenStreetMapTileProviderConstants.setCachePath(this.getFilesDir().getAbsolutePath());
-*
- */

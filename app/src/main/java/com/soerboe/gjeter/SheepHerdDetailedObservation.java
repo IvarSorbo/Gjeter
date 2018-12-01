@@ -5,6 +5,10 @@ import org.osmdroid.util.GeoPoint;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Represents a sheep herd observation.
+ * This is a more detailed observation-type than SheepHerdObservation
+ */
 public class SheepHerdDetailedObservation extends SheepHerdObservation {
     private int lambCount;
     private int lambOriginalCount;

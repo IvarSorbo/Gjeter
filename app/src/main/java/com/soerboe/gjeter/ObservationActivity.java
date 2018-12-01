@@ -19,15 +19,11 @@ import org.osmdroid.util.GeoPoint;
 import java.util.Date;
 
 public class ObservationActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, SheepHerdFragment.MoreDetailsListener {
-    // Tag used in debug messages
+    // Tag used in debug messages.
     private static final String TAG = ObservationActivity.class.getSimpleName();
 
+    // Intent used for sending result back to MainActivity.
     private Intent data = new Intent();
-
-    private boolean success = false;
-
-    private Toolbar toolbar;
-    private Spinner spinner;
 
     private Observation observation;
 
@@ -37,24 +33,13 @@ public class ObservationActivity extends AppCompatActivity implements AdapterVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_observation);
-        //Resources res = getResources();
-
-        /*
-        // Getting the list of observation-types
-        TypedArray res_obs_types = res.obtainTypedArray(R.array.observation_types_nb);
-        int number_of_types = res_obs_types.length();
-        String[] obs_types = new String[number_of_types];
-        for (int i = 0; i < number_of_types; i++){
-            obs_types[i] = res_obs_types.getString(i);
-        }
-        res_obs_types.recycle();*/
 
         // Getting the distance that was set in MainActivity
         observation = getObservationFromIntent();
 
         // Changing ActionBar
-        toolbar = findViewById(R.id.toolbar_obs);
-        spinner = findViewById(R.id.spinner_nav_obs);
+        Toolbar toolbar = findViewById(R.id.toolbar_obs);
+        Spinner spinner = findViewById(R.id.spinner_nav_obs);
         spinner.getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
 
         if (toolbar != null) {
@@ -119,17 +104,13 @@ public class ObservationActivity extends AppCompatActivity implements AdapterVie
 
         data.putExtra("result", result);
         setResult(Activity.RESULT_OK, data);
-        success = true;
         finish();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (!success){
-            sendBackResult();
-            Log.d(TAG, "onPause called the sendBackResult method");
-        }
+        //sendBackResult();
     }
 
     //OnItemSelectedListener methods:
@@ -139,7 +120,7 @@ public class ObservationActivity extends AppCompatActivity implements AdapterVie
         Log.d(TAG, "User selected: " + selected);
         switch (selected){
             case "Saueflokk":{
-                // Show different fragments based on the distance to the observation:
+                // Show fragments with varying level of detail based on the distance to the observation:
                 // (if user's position is unknown it will be set to 0.0,0.0 which will be far away
                 // from any observation-location in Norway. Thus, the long-distance fragment will
                 // be shown if the user's position is unknown)
@@ -185,23 +166,18 @@ public class ObservationActivity extends AppCompatActivity implements AdapterVie
         // Update the local variable
         fragment = newFragment;
 
-        // Create new transaction
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         // Replace the content of fragment_container with newFragment
         transaction.replace(R.id.fragment_container, newFragment);
-        //transaction.addToBackStack(null); // No need to add the fragment to the back stack
 
-        // Commit the transaction
         transaction.commit();
     }
 
     // SheepHerdFragment method:
     @Override
     public void onMoreDetailsClicked(SheepHerdObservation sheepHerdObs) {
-        //This is a listener that must handle the event that "more details" were clicked
         observation = sheepHerdObs;
-        //Log.d(TAG, "Class of observation is now: "+observation.getClass().getCanonicalName());
         changeFragment(new SheepHerdDetailedFragment());
     }
 }

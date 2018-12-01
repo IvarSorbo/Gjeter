@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 
 import com.google.gson.Gson;
 
+/**
+ * A fragment for filling in information about an ear tag.
+ */
 public class EarTagFragment extends MyFragment {
     private EarTag earTag;
     private TextInputEditText color, count;

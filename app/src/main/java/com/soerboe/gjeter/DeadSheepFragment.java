@@ -21,6 +21,9 @@ import com.google.gson.Gson;
 
 import java.io.File;
 
+/**
+ * A fragment for filling information about a dead sheep observation.
+ */
 public class DeadSheepFragment extends MyFragment {
     private TextInputEditText owner, number, notes;
     private TextView output;
@@ -78,7 +81,7 @@ public class DeadSheepFragment extends MyFragment {
                     break;
                 }
                 case Activity.RESULT_CANCELED: {
-                    Toast.makeText(activity, "Canceled", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, R.string.canceled, Toast.LENGTH_SHORT).show();
                     break;
                 }
                 default: break;

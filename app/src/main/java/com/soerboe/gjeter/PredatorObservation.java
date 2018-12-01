@@ -1,5 +1,8 @@
 package com.soerboe.gjeter;
 
+/**
+ * Represents a predator observation.
+ */
 public class PredatorObservation extends Observation {
     private String type;
     private int count;

@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * Stores all the information gathered from a trip that is to be stored to permanent memory
+ * Stores all the information gathered from a trip.
+ * This info will be saved to permanent memory when the app closes
  */
 public class Trip {
     private ArrayList<Waypoint> track;
-    private ArrayList<String> observations; // I could store them as (id, String) for easier update/delete
+    private ArrayList<String> observations;
     private Date startTime;
     private Date endTime;
 
@@ -40,11 +41,4 @@ public class Trip {
     public void finish(){
         endTime = new Date(System.currentTimeMillis());
     }
-
-    /*
-    * NOTE:
-    * For some reason, calling gson.toJson(this) causes the observation-activity's finish() method
-    * to throw an android.os.TransactionTooLargeException. Therefore I have to encode this object
-    * to JSON directly from the main activity instead of just having a toJSON method in this class.
-    * */
 }

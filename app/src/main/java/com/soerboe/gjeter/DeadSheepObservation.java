@@ -4,6 +4,9 @@ import android.net.Uri;
 
 import java.util.ArrayList;
 
+/**
+ * Represents an observation of a dead sheep.
+ */
 public class DeadSheepObservation extends Observation {
     private String owner;
     private int number;
