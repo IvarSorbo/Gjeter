@@ -4,16 +4,16 @@
     <string name="open">Open</string>
     <string name="close">Close</string>
 
-    <string name="download_alert_title">Insert a nice title here</string>
-    <string name="show_cache_info">Current archive</string>
-    <string name="cache_download">Download</string>
+    <string name="download_alert_title">Last ned kart</string>
+    <string name="show_cache_info">Info om kart-cache</string>
+    <string name="cache_download">Last ned</string>
     <string name="cancel">Avbryt</string>
     <string name="confirm">Bekreft</string>
 
-    <string name="bt_new_observation_description">New observation</string>
+    <string name="bt_new_observation_description">Ny observasjon</string>
     <string name="download_map">Last ned kart</string>
     <string name="menu_item2">TODO</string>
-    <string name="menu_item3">TODO_Info</string>
+    <string name="menu_item3">Kart-cache info</string>
     <string name="save">Lagre</string>
     <string name="count">Antall</string>
     <string name="other">Annen</string>

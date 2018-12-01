@@ -108,6 +108,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         newObservation = findViewById(R.id.new_observation);
         confirm_cancel_buttons = findViewById(R.id.confirm_cancel_buttons);
 
+        cacheManager = new CacheManager(mapView);
+
         // Checking and requesting permissions:
         String[] reqPermissions = new String[] {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -289,7 +291,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (actionBarDrawerToggle.onOptionsItemSelected(item)){
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -301,15 +302,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 showDownloadDialog();
                 break;
             }
-            case R.id.menu_item2:{//TODO
-                Toast.makeText(MainActivity.this,"Menu item 2 was clicked", Toast.LENGTH_SHORT).show();
+            case R.id.info_item:{
+                showCurrentCacheInfo();
                 break;
             }
-            case R.id.info_item:{//TODO
-                Toast.makeText(MainActivity.this,"Info item was clicked", Toast.LENGTH_SHORT).show();
-                break;
-            }
-
         }
         // Close navigation drawer.
         drawerLayout.closeDrawer(GravityCompat.START);
@@ -317,24 +313,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     /**
-     * Cache the current area
+     * Show dialog where user can choose to cache the current area or to cancel.
      */
     private void showDownloadDialog(){
         // Build the dialog.
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(R.string.download_alert_title);
+
+        // Add option to download/cancel
         alertDialogBuilder.setItems(new CharSequence[]{
-                        getResources().getString(R.string.show_cache_info),
                         getResources().getString(R.string.cache_download),
                         getResources().getString(R.string.cancel)
                 }, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which){
                             case 0:
-                                cacheManager = new CacheManager(mapView);
-                                showCurrentCacheInfo();
-                                break;
-                            case 1:
                                 downloadJobAlert();
                             default:
                                 dialog.dismiss();
@@ -353,8 +346,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * Show information about the cache
      */
     private void showCurrentCacheInfo() {
-        //TODO
-        Toast.makeText(this, "TODO: show info here", Toast.LENGTH_SHORT).show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this );
+
+                alertDialogBuilder.setTitle("Cache")
+                        .setMessage("Tilgjengelig cache-kapasitet: " +
+                                cacheManager.cacheCapacity()/(1024*1024) +
+                                " MB\nBrukt cache-kapasitet: " +
+                                cacheManager.currentCacheUsage()/(1024*1024) + " MB");
+
+                alertDialogBuilder.setItems(new CharSequence[]{
+                                getResources().getString(R.string.cancel)
+                        }, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }
+                );
+
+                // Create alert dialog and show it.
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final AlertDialog alertDialog = alertDialogBuilder.create();
+                        alertDialog.show();
+                    }
+                });
+            }
+        }).start();
     }
 
     /**
@@ -365,63 +386,59 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             int zoom_max = (int) Math.floor(mapView.getZoomLevelDouble());
             int zoom_min = (int) Math.floor(mapView.getMinZoomLevel());
             BoundingBox bb = mapView.getBoundingBox();
+
             int tilecount = cacheManager.possibleTilesInArea(bb, zoom_min, zoom_max);
 
-            //TODO: change filename? (Do I need a unique filename for each output?)
             String outputName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "osmdroid" + File.separator + "Kartverket";
             sqliteArchiveTileWriter=new SqliteArchiveTileWriter(outputName);
             cacheManager = new CacheManager(mapView, sqliteArchiveTileWriter);
 
-            Log.d(TAG, "\nDownloading tiles:");
-            Log.d(TAG, "Output: " + outputName);
-            Log.d(TAG, tilecount + " tiles");
+            //Log.d(TAG, "\nDownloading tiles:");
+            //Log.d(TAG, "Output: " + outputName);
+            //Log.d(TAG, tilecount + " tiles");
 
-            if (true) {
-                //this triggers the download
-                cacheManager.downloadAreaAsync(this, bb, zoom_min, zoom_max, new CacheManager.CacheManagerCallback() {
-                    @Override
-                    public void onTaskComplete() {
-                        Toast.makeText(MainActivity.this, "Download complete!", Toast.LENGTH_LONG).show();
-                        if (sqliteArchiveTileWriter!=null)
-                            sqliteArchiveTileWriter.onDetach();
-                    }
+            // Download
+            cacheManager.downloadAreaAsync(this, bb, zoom_min, zoom_max, new CacheManager.CacheManagerCallback() {
+                @Override
+                public void onTaskComplete() {
+                    Toast.makeText(MainActivity.this, "Ferdig", Toast.LENGTH_LONG).show();
+                    if (sqliteArchiveTileWriter!=null)
+                        sqliteArchiveTileWriter.onDetach();
+                }
 
-                    @Override
-                    public void onTaskFailed(int errors) {
-                        Toast.makeText(MainActivity.this, "Download complete with " + errors + " errors", Toast.LENGTH_LONG).show();
-                        if (sqliteArchiveTileWriter!=null)
-                            sqliteArchiveTileWriter.onDetach();
-                    }
+                @Override
+                public void onTaskFailed(int errors) {
+                    Toast.makeText(MainActivity.this, "Nedlastning ferdig, men ga " + errors + " feilmeldinger", Toast.LENGTH_LONG).show();
+                    if (sqliteArchiveTileWriter!=null)
+                        sqliteArchiveTileWriter.onDetach();
+                }
 
-                    @Override
-                    public void updateProgress(int progress, int currentZoomLevel, int zoomMin, int zoomMax) {
-                        //NOOP since we are using the build in UI
-                    }
+                @Override
+                public void updateProgress(int progress, int currentZoomLevel, int zoomMin, int zoomMax) {
+                    //NOOP since we are using the build in UI
+                }
 
-                    @Override
-                    public void downloadStarted() {
-                        //NOOP since we are using the build in UI
-                    }
+                @Override
+                public void downloadStarted() {
+                    //NOOP
+                }
 
-                    @Override
-                    public void setPossibleTilesInArea(int total) {
-                        //NOOP since we are using the build in UI
-                    }
-                });
-            }
+                @Override
+                public void setPossibleTilesInArea(int total) {
+                    //NOOP
+                }
+            });
+
         }catch (Exception ex){
-            //TODO
             ex.printStackTrace();
+            Log.d(TAG, "Something went wrong with the downlaod");
         }
-
     }
 
     /**
      * Setup a location listener
      */
     private void SetupLocationListener(){
-        //TODO: what happens if user does not grant permission initially, but wants to do it later?
-
         LocationManager locationManager; //Accesses location services
         LocationListener locationListener; //Listens for location changes
 
@@ -572,7 +589,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         GeoPoint my_pos = trip.getCurrentGeoPoint();
         if(my_pos == null){
             my_pos = new GeoPoint(0.0, 0.0);
-            //TODO: Warn the user?
+            Toast.makeText(MainActivity.this,
+                    "Unable to find current GPS location.",
+                    Toast.LENGTH_SHORT).show();
         }
 
         // Find the observation's position

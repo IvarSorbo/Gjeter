@@ -38,16 +38,6 @@
 
     </RelativeLayout>
 
-    <!-- Navigation View that can be dragged in from the left -->
-    <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        app:menu="@menu/nav_menu"
-        android:layout_gravity="start"
-        app:headerLayout="@layout/nav_header">
-
-    </android.support.design.widget.NavigationView>
 
     <!-- A crosshair in the middle of the screen -->
     <LinearLayout
@@ -131,4 +121,15 @@
             style="@style/Widget.AppCompat.Button.Colored"/>
     </LinearLayout>
 
+    <!-- Navigation View that can be dragged in from the left
+    NOTE: the NavigationView must be the last element of the DrawerLayout for it to work-->
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:menu="@menu/nav_menu"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header">
+
+    </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>
