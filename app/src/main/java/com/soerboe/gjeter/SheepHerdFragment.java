@@ -14,7 +14,7 @@ import android.widget.Button;
 import com.google.gson.Gson;
 
 public class SheepHerdFragment extends MyFragment {
-    private TextInputEditText whiteCount, blackCount, otherCount;
+    private TextInputEditText whiteCount, blackCount, otherCount, notes;
 
     private Activity activity;
 
@@ -34,6 +34,7 @@ public class SheepHerdFragment extends MyFragment {
         whiteCount = view.findViewById(R.id.whiteSheep_sheepHerdFragment);
         blackCount = view.findViewById(R.id.blackSheep_sheepHerdFragment);
         otherCount = view.findViewById(R.id.otherSheep_sheepHerdFragment);
+        notes = view.findViewById(R.id.notes_sheepherdFragment);
 
         // "More details"-button
         Button btDetailedObs = view.findViewById(R.id.bt_detailed_obs);
@@ -70,6 +71,7 @@ public class SheepHerdFragment extends MyFragment {
         sheepHerdObservation.setBlackSheepCount(InputChecker.getInt(blackCount,0));
         sheepHerdObservation.setWhiteSheepCount(InputChecker.getInt(whiteCount,0));
         sheepHerdObservation.setOtherSheepCount(InputChecker.getInt(otherCount,0));
+        sheepHerdObservation.setNotes(InputChecker.getString(notes));
     }
 
     /**

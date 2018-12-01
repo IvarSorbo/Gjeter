@@ -16,7 +16,7 @@ import java.io.InputStreamReader;
 
 public class OtherFragment extends MyFragment {
 
-    private TextInputEditText type, count;
+    private TextInputEditText type, count, notes;
     private Activity activity;
     private OtherObservation otherObservation;
     private Gson gson = new Gson();
@@ -29,6 +29,8 @@ public class OtherFragment extends MyFragment {
 
         type = view.findViewById(R.id.type_otherFragment);
         count = view.findViewById(R.id.count_otherFragment);
+        notes = view.findViewById(R.id.notes_otherFragment);
+
 
         // Assumes that the parent activity is an ObservationActivity
         Observation observation = ((ObservationActivity) activity).getObservation();
@@ -46,6 +48,7 @@ public class OtherFragment extends MyFragment {
     private void update(){
         otherObservation.setType(InputChecker.getString(type));
         otherObservation.setCount(InputChecker.getInt(count, 0));
+        otherObservation.setNotes(InputChecker.getString(notes));
     }
 
     @Override

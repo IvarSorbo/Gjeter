@@ -7,7 +7,6 @@ import java.util.ArrayList;
 public class DeadSheepObservation extends Observation {
     private String owner;
     private int number;
-    private String notes;
     private ArrayList<Uri> photos = new ArrayList<>();
 
     public DeadSheepObservation(Observation o) {
@@ -29,14 +28,6 @@ public class DeadSheepObservation extends Observation {
 
     public void setNumber(int number) {
         this.number = number;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
     }
 
     public void addPhoto(Uri uri) {

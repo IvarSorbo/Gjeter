@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 
 public class HunterFragment extends MyFragment {
 
-    private TextInputEditText hunterCount, dogCount;
+    private TextInputEditText hunterCount, dogCount, notes;
     private Activity activity;
     private HunterObservation hunterObservation;
     private Gson gson = new Gson();
@@ -25,6 +25,8 @@ public class HunterFragment extends MyFragment {
         View view = inflater.inflate(R.layout.fragment_hunter, container, false);
         hunterCount = view.findViewById(R.id.hunters_hunterFragment);
         dogCount = view.findViewById(R.id.dogs_hunterFragment);
+        notes = view.findViewById(R.id.notes_hunterFragment);
+
 
         // Assumes that the parent activity is an ObservationActivity
         Observation observation = ((ObservationActivity) activity).getObservation();
@@ -42,6 +44,7 @@ public class HunterFragment extends MyFragment {
     private void update(){
         hunterObservation.setHunterCount(InputChecker.getInt(hunterCount,0 ));
         hunterObservation.setDogCount(InputChecker.getInt(dogCount, 0));
+        hunterObservation.setNotes(InputChecker.getString(notes));
     }
 
     @Override

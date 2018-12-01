@@ -22,7 +22,7 @@ public class SheepHerdDetailedFragment extends MyFragment{
     private SheepHerdDetailedObservation observation;
     private ArrayList<EarTagFragment> earTagFragments;
     private Activity activity;
-    private TextInputEditText whiteSheep, blackSheep, otherSheep, lamb, lambOrg;
+    private TextInputEditText whiteSheep, blackSheep, otherSheep, lamb, lambOrg, notes;
 
     private Gson gson = new Gson();
 
@@ -40,6 +40,7 @@ public class SheepHerdDetailedFragment extends MyFragment{
         otherSheep = view.findViewById(R.id.otherSheep_detSheepHerdFrag);
         lamb = view.findViewById(R.id.lamb_detSheepHerdFrag);
         lambOrg = view.findViewById(R.id.lamb_org_detSheepHerdFrag);
+        notes = view.findViewById(R.id.notes_detSheepHerdFrag);
 
         // Check for changes to the original lamb count and alert the user if some lambs are missing
         TextWatcher textWatcher = new TextWatcher() {
@@ -122,6 +123,7 @@ public class SheepHerdDetailedFragment extends MyFragment{
         observation.setOtherSheepCount(InputChecker.getInt(otherSheep, 0));
         observation.setLambCount(InputChecker.getInt(lamb, 0));
         observation.setLambOriginalCount(InputChecker.getInt(lambOrg, 0));
+        observation.setNotes(InputChecker.getString(notes));
     }
 
 

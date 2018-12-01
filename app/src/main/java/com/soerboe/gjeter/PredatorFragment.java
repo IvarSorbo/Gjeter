@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import com.google.gson.Gson;
 
 public class PredatorFragment extends MyFragment {
-    private TextInputEditText type, count;
+    private TextInputEditText type, count, notes;
     private Activity activity;
     private PredatorObservation predatorObservation;
     private Gson gson = new Gson();
@@ -24,8 +24,9 @@ public class PredatorFragment extends MyFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_predator, container, false);
 
-        type = view.findViewById(R.id.type_otherFragment);
-        count = view.findViewById(R.id.count_otherFragment);
+        type = view.findViewById(R.id.type_predatorFragment);
+        count = view.findViewById(R.id.count_predatorFragment);
+        notes = view.findViewById(R.id.notes_predatorFragment);
 
         // Assumes that the parent activity is an ObservationActivity
         Observation observation = ((ObservationActivity) activity).getObservation();
@@ -43,6 +44,7 @@ public class PredatorFragment extends MyFragment {
     private void update(){
         predatorObservation.setType(InputChecker.getString(type));
         predatorObservation.setCount(InputChecker.getInt(count, 0));
+        predatorObservation.setNotes(InputChecker.getString(notes));
     }
 
     @Override

@@ -12,13 +12,14 @@ public class Observation {
     private GeoPoint obsPosition;
     private GeoPoint myPosition;
     private Date time;
-
+    private String notes;
 
     public Observation(final GeoPoint obsPosition, final GeoPoint myPosition, final Date time){
         this.obsPosition = obsPosition;
         this.myPosition = myPosition;
         this.time = time;
         this.observationType = Constants.OBS_TYPE.DEFAULT_OBSERVATION;
+        this.notes = "";
     }
 
     public Observation(final Observation o){
@@ -44,6 +45,14 @@ public class Observation {
 
     public GeoPoint getMyPosition() {
         return myPosition;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     /**
