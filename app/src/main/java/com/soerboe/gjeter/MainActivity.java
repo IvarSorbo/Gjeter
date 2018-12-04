@@ -163,6 +163,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Add the ability to zoom with 2 fingers.
         mapView.setMultiTouchControls(true);
 
+        // Don't show zoom buttons.
+        mapView.setBuiltInZoomControls(false);
+
         // Add a MyLocation overlay (shows the user's position on the map)
         MyLocationNewOverlay myLocationNewOverlay;
         myLocationNewOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this),mapView);
