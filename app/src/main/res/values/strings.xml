@@ -25,7 +25,8 @@
     <string name="white">Hvit</string>
     <string name="detailed_description">Detaljert beskrivelse…</string>
     <string name="eartagcolor">Øremerkefarge</string>
-    <string name="notes">Notater:</string>
+    <string name="notes_title">Notater:</string>
+    <string name="notes">Notater</string>
     <string name="take_picture">Ta bilde</string>
     <string name="owner">Eier</string>
     <string name="eartag">Øremerke:</string>
